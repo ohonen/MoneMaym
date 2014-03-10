@@ -1,0 +1,76 @@
+html, body {
+	height:100%;
+	width: 100%;
+
+}
+
+table {
+	width: 90%;
+	margin: 1%;
+	text-align: center;
+}
+
+.Head {
+	height:15%;
+	width: 100%;
+}
+
+.Button {
+	width: 40%;
+	margin: 1px;
+	padding: 2% 0%;
+	color: #FF0000;
+	background-color:#EEEEEE;
+	text-align: center; 
+	line-height:100%;
+	vertical-align: middle;	
+	border-width: 2px;
+	border-color: #000000;
+	border-style: solid;
+	border-radius: 5px;
+	box-shadow:10px 10px 5px #888888;
+	transition: background-color 0.5s;
+	transition: box-shadow 0.3s;
+	position: absolute;
+}
+
+.Button:hover {
+	color: #0000FF;	
+	background-color:#FFEEEE;
+
+}
+
+.Button:active {
+	box-shadow:2px 2px 2px #888888;
+
+}
+
+#LeftButton {
+	left:1%;
+	
+}
+
+#RightButton {
+	right:1%;
+}
+
+#content {
+	top: 30%;
+}
+
+#abox {
+	height: 100px;
+	width:100px;
+	background-color:gray;
+}
+
+#Logo {
+	position: absolute;
+	height: 50%;
+	width: 90%;
+	bottom: 0px;
+	background-color: orange;
+	alignment-adjust: central;
+	
+}
+
