@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Login</title>
+		<link rel="stylesheet" type="text/css" href="project.css">
+		<link type="text/javascript" href="project.js">
+	</head>
+
+	<body>
+		<div id="Content">
+			<form action="CounterSearch.html">
+				User: <input type="text" name="username"/><br>
+				Password: <input type="password" name="password"><br>
+				<input type="submit" value="submit">
+			</form>
+			
+		</div>
+		<div id="Logo" class="center">
+			<div id="LogoImage">
+				<img  src="Logo.svg" alt="Logo" />			
+			</div>
+		</div>
+		
+		<script type="text/javascript" src="sqlite.js"></script>
+		<script type="text/javascript">
+			db_init();
+			db_addMeter(1, "M1", "METER OF FIELD 1");
+			db_addMeter(2, "M2", "METER OF FIELD 2", "32.6559 35.1152"); // Yokneam
+			db_addMeter(3, "M3", "METER OF FIELD 3", "32.8304 34.9743"); // Haifa
+			db_addUser(1,"123123", "Oren H");
+			db_addUser(2,"456456", "Erez");
+			db_addUser(3,"789789", "Tomer");
+			db_addReading(1,2,32);
+			db_addReading(2,1,25);
+			db_addReading(2,3,35);
+			
+		</script>
+
+	</body>
+	
+</html>

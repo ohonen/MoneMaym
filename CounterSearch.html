@@ -3,37 +3,48 @@
 	<head>
 		<title>Counter Search</title>
 		<link rel="stylesheet" type="text/css" href="project.css">
-		<link type="text/javascript" href="project.js">
+		<meta http-equiv="Content-Type" content="text/html;charset=iso-8859-8-i">
+		<meta charset="iso-8859-8-i">
 	</head>
 
 	<body>
+		<script type="text/javascript" src="project.js"></script>
 	
 		<div class="Head">
-			<span id="LeftButton" class="Button">LEFT</span>
-			<span id="RightButton" class="Button">
-				<span class="ButtonText">RIGHT</span>
-			</span>
+			<div id="LeftButton" class="Button">Unread</div>
+			<div id="RightButton" class="Button">Closeby</div>
 		</div>
-		<form>
-			Search: <input type="text" name="filter"/>
-		</form>
 		<div id="Content">
-			<table>
-				<th>h1</th><th>h2</th><th>h3</th>
-				<tr>
-					<td>d11</td><td>d12</td><td>d13</td>
-				</tr>				
-				<tr>
-					<td>d21</td><td>d22</td><td>d23</td>
-				</tr>
-				<tr>
-					<td>d31</td><td>d32</td><td>d33</td>
-				</tr>
-			</table>
+			<form>
+				Search: <input type="text" name="filter" onkeyup="dataFilter(this.value)"/>
+			</form>
+			<div id="tableData">
+				<table>
+					<th>h1</th><th>h2</th><th>אאאאאא</th>
+						<tr>
+							<td>dx11</td><td>dx12</td><td>dx13</td>
+						</tr>				
+				</table>
+			</div>
 		</div>
-		<div id="Logo">
-			<img src="Logo.svg" alt="Logo"/>
+		
+		<div class="Footer">
+			<div class="col span_1_of_3">
+				<a href="Login.html">Force DB update</a>
+			</div>
+			<div class="col span_1_of_3">
+				<a href="Login.html">Setup</a>
+			</div>
+			<div class="col span_1_of_3">
+				<a href="Login.html">EXIT</a>
+			</div>
 		</div>
-	
+
+		<script type="text/javascript" src="sqlite.js"></script>
+		<script type="text/javascript">
+			//db_catReadings();
+			db_catMeters();
+		</script>
+
 	</body>
 </html>

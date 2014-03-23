@@ -1,24 +1,24 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<title>Meter Read</title>
+		<title>Meter Data</title>
 		<link rel="stylesheet" type="text/css" href="project.css">
 	</head>
 
 	<body>
 	
 		<div class="Head">
-			<span id="LeftButton" class="Button">LEFT</span>
-			<span id="RightButton" class="Button">
-				<span class="ButtonText">RIGHT</span>
-			</span>
+			<div>NAME:</div>
+			<div>ID:</div>
 		</div>
 		<div id="Content">
-			<div id="abox">HELLO</div>
+			<div id="tableData">DATA HERE</div>
 		</div>
-		<div id="Logo">
-			<img src="Logo.svg" alt="Logo"/>
-		</div>
+		
+		<script type="text/javascript" src="sqlite.js"></script>
+		<script type="text/javascript">
+			db_catReadings();
+		</script>
 	
 	</body>
 </html>
