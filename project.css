@@ -1,6 +1,7 @@
 html, body {
 	height:98%;
-	width: 98%;
+	width: 95%;
+	background-color:#FFEEBB;
 
 }
 
@@ -18,7 +19,11 @@ table {
 .center
 {
 margin:auto;
-width:20%;
+width:60%;
+}
+
+.large {
+	height: 20%;
 }
 
 .Button {
@@ -38,6 +43,7 @@ width:20%;
 	transition: background-color 0.5s;
 	transition: box-shadow 0.3s;
 	position: absolute;
+	font-size:300%;
 }
 
 .Button:hover {
@@ -60,8 +66,9 @@ width:20%;
 	right:1%;
 }
 
-#content {
+#Content {
 	top: 30%;
+	background-color:#FFEEBB;
 }
 
 #abox {

@@ -1,3 +1,7 @@
+$(document).ready(function() {
+	alert("Hello document ready");
+});
+
 function showResult(str)
 {
 	if (str.length==0)
