@@ -1,8 +1,16 @@
-html, body {
-	height:98%;
+html {
+	height: 97%;
 	width: 95%;
-	background-color:#FFEEBB;
+} 
 
+body {
+	height:100%;
+	width: 100%;
+	background-color:#FFEEBB;
+}
+
+input {
+	font-size: 100%;	
 }
 
 table {
@@ -11,15 +19,33 @@ table {
 	text-align: center;
 }
 
+.topBar {
+	height: 5%;
+	text-align:right; 
+	width:40%; 
+	right:3%;
+	font-size: 200%;	
+}
+
 .Head {
-	height:20%;
+	height:25%;
 	width: 100%;
+	font-size: 300%;
 }
 
 .center
 {
-margin:auto;
-width:60%;
+	height:68%;
+/*	margin:auto; */ 
+	width:95%;
+}
+
+.footer
+{
+/*	position: absolute; */	
+ 	width: 98%;
+	bottom: 2px;
+	height:10%;
 }
 
 .large {
@@ -58,18 +84,14 @@ width:60%;
 }
 
 #LeftButton {
-	left:1%;
+	left:5%;
 	
 }
 
 #RightButton {
-	right:1%;
+	right:5%;
 }
 
-#Content {
-	top: 30%;
-	background-color:#FFEEBB;
-}
 
 #abox {
 	height: 100px;
@@ -93,11 +115,6 @@ width:60%;
 	width: 20%;
 }
 
-.Footer {
-		position: absolute;
-		width: 98%;
-		bottom: 2px;
-}
 /*  COLUMN SETUP  */
 .col {
 /*	position: relative; */
@@ -107,6 +124,11 @@ width:60%;
 	text-align: center;
 }
 .col:first-child { margin-left: 0; }
+
+/* GRID of 2 */
+.span_1_of_2 {
+	width:49%;
+}
 
 /*  GRID OF THREE  */
 .span_3_of_3 {
@@ -119,4 +141,12 @@ width:60%;
 	width: 32.2%;
 }
 
+/* GRID of Footer <narrow><wide><wide><narrow> */
+.span_footer_narrow {
+	width:15%;
+	font-weight: bold;	
+}
 
+.span_footer_wide {
+	width:30%;
+}

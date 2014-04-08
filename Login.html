@@ -3,10 +3,13 @@
 	<head>
 		<title>Login</title>
 		<link rel="stylesheet" type="text/css" href="project.css">
-		<link type="text/javascript" href="project.js">
+		<meta charset="utf-8"/>
 	</head>
 
 	<body>
+		<script src="jquery-2.1.0.min.js"></script>
+		<script type="text/javascript" src="project.js"></script>
+
 		<!-- <div class="Head"></div> -->
 		<div id="Content" class="center large" >
 			<form action="CounterSearch.html" style="height:15%;">
@@ -24,18 +27,19 @@
 		
 		<script type="text/javascript" src="sqlite.js"></script>
 		<script type="text/javascript">
-/*
+
+			db_deleteDB();
 			db_init();
-			db_addMeter(1, "M1", "METER OF FIELD 1");
-			db_addMeter(2, "M2", "METER OF FIELD 2", "32.6559 35.1152"); // Yokneam
-			db_addMeter(3, "M3", "METER OF FIELD 3", "32.8304 34.9743"); // Haifa
-			db_addUser(1,"123123", "Oren H");
-			db_addUser(2,"456456", "Erez");
-			db_addUser(3,"789789", "Tomer");
-			db_addReading(1,2,32);
-			db_addReading(2,1,25);
-			db_addReading(2,3,35);
-*/		
+			db_addMeter(1, 1, "אבוקדו", "ליד העץ הגבוה", "beit zera", 1, 4.3, 6, 0.95, 700, 0.0, 0.0, 0.0, "time0", 67865, 0, "time1", 67865, 0,"time2", 67865, 0,"time3", 67865, 0,"time4", 67865, 0);
+//			db_addMeter(2, "M2", "METER OF FIELD 2", "32.6559 35.1152"); // Yokneam
+//			db_addMeter(3, "M3", "METER OF FIELD 3", "32.8304 34.9743"); // Haifa
+			db_addUser(1,"Oren", "123");
+			db_addUser(2,"Erez", "123");
+			db_addUser(3,"Tomer", "123");
+			db_addReading("time0", 1, 67899);
+			//db_addReading(2,1,25);
+			//db_addReading(2,3,35);
+		
 		</script>
 
 	</body>

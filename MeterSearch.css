@@ -1,0 +1,34 @@
+body {
+/*	float:left;
+	position:static;
+*/
+}
+
+.center
+{
+	height:68%;
+	width:95%;
+	font-size: 100%;
+}
+
+.cButton
+{
+	width:80%;	
+	font-size:200%;
+}
+
+.cForm 
+{
+	padding: 1%;
+	font-size:120%;
+}
+
+.cFormInput {
+	width: 80%;	
+}
+
+#tableData {
+	height:100%;
+	overflow: scroll;
+	font-size: 300%;
+}

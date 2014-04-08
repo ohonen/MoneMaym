@@ -1,0 +1,84 @@
+.headButtonDiv {
+	width:20%;
+	height:60%;
+}
+
+.headButton {
+	width:100%;
+	height:100%;
+	padding:5%;
+	margin:5% 10%;
+	font-size: 100%;
+}
+
+.headButtonImg {
+	height: 90%;	
+}
+
+.headData {
+	width:75%;
+	height:100%;
+	font-size: 150%;
+}
+
+.center {
+	margin:0%;
+	padding:1%;
+/*	background: #888888; */
+}
+
+.detailedKey {
+	width:35%;
+	font-weight: bold;
+	padding: 2%;
+	background: #808080;	
+	color: white;
+}
+
+.detailedValue {
+	font-weight: bold;
+	padding: 2%;
+	
+}
+
+#tableDetails {
+	text-align:right;
+	font-size: 170%;
+}
+
+.newOldTile {
+	background: black;
+	color: white;
+	width: 100%;
+	margin: 1%;
+	text-align: right;
+	float:right;
+}
+
+.switchInputLine {
+	width: 20%;
+	text-align: right;
+	float: right;
+}
+
+.switchInput {
+	width:40%;
+	float: right;
+	display: block;
+}
+
+.placeHolder {
+	float: right;
+	width: 40%;
+	display: block;
+
+}
+
+.head_data_bg {
+	background: #FFCC99;
+}
+#bSwitchSubmit {
+	float: left;
+	text-align: center;
+}
+
