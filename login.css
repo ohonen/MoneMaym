@@ -1,0 +1,25 @@
+#Logo {
+	position: absolute; 
+	height: 50%;
+	width: 100%;
+	bottom: 0px;
+	background-color: orange;
+	/*alignment-adjust: central;*/	
+}
+
+#LogoImage {
+	margin-right: auto;
+	margin-left: auto;
+	vertical-align: middle;
+	width: 20%;
+}
+
+@media (orientation: portrait)
+{
+	
+}
+
+@media (orientation: landscape)
+{
+	
+}

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Counter Search</title>
+		<link rel="stylesheet" type="text/css" href="project.css">
+		<link rel="stylesheet" type="text/css" href="MeterSearch.css">
+		<!-- <meta http-equiv="Content-Type" content="text/html;charset=iso-8859-8-i"> -->
+		<!-- <meta charset="iso-8859-8-i"> -->
+		<meta charset="utf-8"/>
+		<script src="jquery-2.1.0.min.js"></script>
+		<script type="text/javascript" src="sqlite.js"></script>
+		<script type="text/javascript" src="MeterSearch.js"></script>
+		<script type="text/javascript" src="WebService.js"></script>
+		
+	</head>
+
+	<body>
+<!--		<div class="topBar col span_3_of_3">  -->
+		<div class="topBar">
+			<div class="col span_1_of_3">
+				<button id="readws" type="button" onkeyup="readWS()">Read WS</button>
+			</div>
+			<div id="User" class="col span_1_of_3">Moti Cohen</div>
+			<div class="col span_1_of_3">
+				<a href="Login.html">Logout</a>
+			</div>			
+		</div>
+		<div class="header">
+			<div class="cButtonDiv">
+				<button class="cButton" id="bUnread">לא נקרא</button>
+			</div>
+			<div class="cButtonDiv">
+				<button class="cButton" id="bCloseby">קרוב</button>
+			</div>
+			<div dir="rtl">
+				<form class="cForm">
+<!--					סינון: <input class="cFormInput" type="number" name="filter" onkeyup="dataFilter(this.value)"/> -->
+					סינון: <input class="cFormInput" type="number" name="filter" onkeyup="db_catMeters(this.value)"/>
+				</form>
+			</div>
+		</div>
+		<div class="center" id="Content">
+			<div id="tableData">
+				<table>
+					<tr id="tableHeader">
+						<th>#</th><th>שם</th><th>תיאור</th>
+					</tr>
+					<tr>
+						<td>dx11</td><td>dx12</td><td>dx13</td>
+					</tr>				
+				</table>
+			</div>
+		</div>
+		<div class="footer">
+			<div class="span_footer_narrow">
+				<button class="footerButton" id="footerLeft">&lt;</button>
+			</div>
+			<div class="span_footer_wide">
+				<button class="footerButton" id="footerSetup">כללי</button>
+			</div>
+			<div class="span_footer_wide">
+				<button class="footerButton" id="footerDetails">פרטים</button>
+			</div>
+			<div class="span_footer_narrow">
+				<button class="footerButton" id="footerRight">&gt;</button>
+			</div>
+		</div>
+
+	</body>
+</html>

@@ -1,8 +1,27 @@
+function Mone(number)
+{
+	sessionStorage.meterId = number;
+}
+
 $(document).ready(function() {
+	$("#User").html(sessionStorage.User);
+	
 	$("#readws").click(function() {
 		alert("Read WS was pressed");
-		readWS();
+		readWS2();
 	});
+	
+	$("#footerSetup").click(function() {
+		window.location = "SystemSetup.html";
+	});
+
+
+	$("#footerLeft").hide();
+	$("#footerRight").hide();
+	$("#footerDetails").hide();
+	
+	db_catMeters();
+
 });
 
 function showResult(str)
@@ -60,23 +79,5 @@ function dataFilter(str)
 	xmlhttp.send();
 };
 
-function updateTable()
-{
-	
-	db_init();
-	db_addMeter(1, "M1", "METER OF FIELD 1");
-	db_addMeter(2, "M2", "METER OF FIELD 2", "32.6559 35.1152"); // Yokneam
-	db_addMeter(3, "M3", "METER OF FIELD 3", "32.8304 34.9743"); // Haifa
-	db_addUser(1,"123123", "Oren H");
-	db_addUser(2,"456456", "Erez");
-	db_addUser(3,"789789", "Tomer");
-	db_addReading(1,2,32);
-	db_addReading(2,1,25);
-	db_addReading(2,3,35);	
-}
-
-function Mone(number)
-{
-	window.location.href = "MeterData.html?Num="+number;
-}
+//var productServiceUrl = "http://5.100.248.223/MesophonTest/service1.asmx?op=GetSingleInstanceForTestUsingContext";
 

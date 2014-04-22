@@ -1,4 +1,5 @@
 .headButtonDiv {
+	float: left;
 	width:20%;
 	height:60%;
 }
@@ -6,25 +7,105 @@
 .headButton {
 	width:100%;
 	height:100%;
-	padding:5%;
-	margin:5% 10%;
-	font-size: 100%;
+	margin: auto;
 }
 
 .headButtonImg {
-	height: 90%;	
+	height: auto;
+	width: auto;
+	max-width: 90%;
+	max-height: 90%;	
 }
 
 .headData {
-	width:75%;
-	height:100%;
-	font-size: 150%;
+	float: right;
+	margin-left:1%;
+	width:70%;
+/*	height:100%; */
+}
+
+.head_data_element {
+	float: left;
+	background: #FFCC99;
+	border: 1px solid;
+	border-radius: 4px;
+	margin: 1px 0;
+	font-size: 100%;
+	direction: rtl;
+}
+
+#headName 
+{
+	width: 70%;
+	text-align: center;
+}
+
+#headId
+{
+	float: right;
+	width: 29%;
+	text-align: center;
+}
+
+#headDetails
+{
+	width: 100%;
 }
 
 .center {
 	margin:0%;
 	padding:1%;
+	
 /*	background: #888888; */
+}
+
+.cReadForm {
+	float:right;
+	width: 100%;
+	background-color: #FFDDBB;
+}
+
+.cReadData {
+	float: right;
+	width: 70%;
+}
+
+.cSubmitData {
+	float: right;
+	width: 30%;
+	height: 100%;
+}
+
+.cSubmitButton {
+	width: 70%;
+	font-size: 100%;
+	margin: 5%;
+}
+
+.cReadMonth {
+	text-align: center;	
+}
+
+.cReadInput {
+	float: right;
+	font-size: 100%;
+	margin: auto;
+	margin-right: 10%;
+	width: 40%;
+}
+
+.cReadAmount {
+	float: right;
+	width: 30%;
+	margin-left:auto;
+	margin-right:auto;
+	text-align: center;
+}
+
+.cTableData {
+	float: left;
+	width: 100%;
+	margin: 0%;
 }
 
 .detailedKey {
@@ -43,7 +124,6 @@
 
 #tableDetails {
 	text-align:right;
-	font-size: 170%;
 }
 
 .newOldTile {
@@ -74,9 +154,6 @@
 
 }
 
-.head_data_bg {
-	background: #FFCC99;
-}
 #bSwitchSubmit {
 	float: left;
 	text-align: center;

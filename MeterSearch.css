@@ -1,34 +1,65 @@
-body {
-/*	float:left;
-	position:static;
-*/
+.header
+{
+	font-size: 150%;
 }
 
 .center
 {
-	height:68%;
-	width:95%;
-	font-size: 100%;
+	font-size: 120%;
+}
+
+.footer
+{
+}
+
+
+
+.cButtonDiv
+{
+	float: left;
+	width:50%;
+	padding:0%;
 }
 
 .cButton
 {
-	width:80%;	
-	font-size:200%;
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+	width: 60%;
+	font-size:100%;
 }
 
 .cForm 
 {
 	padding: 1%;
-	font-size:120%;
+	font-size: 100%;
 }
 
 .cFormInput {
-	width: 80%;	
+	width: 80%;
+	font-size: 100%;
+	margin: 2%;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.cTable {
+	text-align: right;
+	width: 95%;	
+}
+
+.cUnitName {
+	background-color:#FFBBBB;
+}
+
+.cMeterId {
+	font-size: 100%;	
 }
 
 #tableData {
 	height:100%;
 	overflow: scroll;
-	font-size: 300%;
+	font-size: 100%;
+	text-align: right;
 }

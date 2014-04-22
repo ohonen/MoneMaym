@@ -5,6 +5,7 @@
 		<link rel="stylesheet" type="text/css" href="project.css">
 		<link rel="stylesheet" type="text/css" href="MeterData.css">
 		<meta charset="utf-8"/>
+		<meta name="author" content="Oren Honen - Software Maven" />
 	</head>
 
 	<body>
@@ -12,39 +13,87 @@
 		<script type="text/javascript" src="sqlite.js"></script>
 		<script type="text/javascript" src="MeterData.js"></script>
 		
-		<div class="topBar col span_3_of_3">
-			<div class="col span_1_of_3">
+		<div class="topBar span_3_of_3">
+			<div class="topBarElement">
 				<button id="readws" type="button" onkeyup="readWS()">Read WS</button>
 			</div>
-			<div class="col span_1_of_3">Moti Cohen</div>
-			<div class="col span_1_of_3">
-				<a href="Login.html">Logout</a>
+			<button id="topHomeButton" class="topBarElement" onclick='window.location.href="MeterSearch.html";'>
+				<img id="homeImg" class="headButtonImg" src="Home_symbol.svg" alt="HOME"/>
+			</button>
+			<div id="User" class="span_1_of_3 topBarElement">Moti Cohen</div>
+			<div class="span_1_of_3 topBarElement" id="logoutDiv">
+				<a href="Login.html">צא</a>
 			</div>			
 		</div>
 
-		<div class="Head">
-			<div class="col headButtonDiv">
+		<div class="header">
+			<div class="headButtonDiv">
 				<button id="headButton" class="headButton">
 					<img id="gpsImg" class="headButtonImg" src="globe sketch.jpg" alt="GPS"/>
 					<img id="tableImg" class="headButtonImg" src="Grid.png" alt="Table"/>	
 				</button>
 			</div>
-			<div class="col headData">
-				<div class="col span_1_of_2 head_data_bg">M25</div>
-				<div class="col span_1_of_2 head_data_bg">10025</div>
-				<div class="col span_3_of_3 head_data_bg">בית זרע - חמניות</div>
+			<div class="headData">
+				<div class="head_data_element" id="headName">בית זרע - חמניות</div>
+				<div class="head_data_element" id="headId">123456789</div>
+				<div class="head_data_element" id="headDetails">בצד שמאל של המוסך ליד העץ שזיפים הכחולים</div>
 			</div>
 		</div>
 
 		<div class="center">
-			<div id="tableData">DATA HERE</div>
-			<iframe id="Map" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3359.6461537310547!2d35.08712354999999!3d32.6422453!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x151da928dcddc711%3A0x93008f7d57eca615!2sDaliyot!5e0!3m2!1sen!2sil!4v1395653488627" width="100%" height="85%" frameborder="1" style="border:1">
-				GPS MAP
-			</iframe>
+			<form class="cReadForm">
+				<div class="cReadData">
+					<div class="cReadMonth" id="readMonth">March</div>
+					<input class="cReadInput" type="number" id="currentRead" name="currentRead" onchange="currentReadAdjust(this.value)" onkeyup="currentReadAdjust(this.value)"/>
+					<span class="cReadAmount" id="readAmount">0</span>
+				</div>
+				<div class="cSubmitData">
+					<button class="cSubmitButton" id="submitButton" onclick="appendAndSendData()">שלח</button>
+				</div>
+			</form>
+			<div class="cTableData" id="tableData">
+				<table>
+					<thead>
+						<tr>
+							<th>תאריך</th>
+							<th>חודש</th>
+							<th>קריאה</th>
+							<th>כמות</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td id="Date0">D0</td>
+							<td id="Month0">M0</td>
+							<td id="Reading0">R0</td>
+							<td id="Amount0">A0</td>
+						</tr>
+						<tr>
+							<td id="Date1">D1</td>
+							<td id="Month1">M1</td>
+							<td id="Reading1">R1</td>
+							<td id="Amount1">A1</td>
+						</tr>
+						<tr>
+							<td id="Date2">D2</td>
+							<td id="Month2">M2</td>
+							<td id="Reading2">R2</td>
+							<td id="Amount2">A2</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+<!--			<iframe id="Map" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3359.6461537310547!2d35.08712354999999!3d32.6422453!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x151da928dcddc711%3A0x93008f7d57eca615!2sDaliyot!5e0!3m2!1sen!2sil!4v1395653488627" width="100%" height="85%" frameborder="1" style="border:1">      --></iframe>
+<!--			<iframe id="Map" src="https://www.google.co.il/maps/@32.6853626,35.5726944,17z?hl=iw" width="50%" height="85%" frameborder="1" style="border:1">  -->
+			<div id="Map">
+				<iframe src="https://www.google.com/maps/embed?pb=!1m10!1m8!1m3!1d3358.02568115253!2d35.572694412193925!3d32.685362631323244!3m2!1i1024!2i768!4f13.1!5e0!3m2!1siw!2s!4v1397387047598" width="80%" height="100%" frameborder="0" style="border:0">
+					GPS MAP
+				</iframe>
+			</div>
 			<table id="tableDetails" dir="rtl">
 				<tr><td class="detailedKey">לקוח</td><td id="detailedCustomer" class="detailedValue">בית זרע</td></tr>
 				<tr><td class="detailedKey">מספר ברזל</td><td id="detailedIron" class="detailedValue">6655</td></tr>
-				<tr><td class="detailedKey">קוטר</td><td id="detailedDiameter" class="detailedValue">&quot4</td></tr>
+				<tr><td class="detailedKey">קוטר</td><td class="detailedValue"><span>&quot;</span><span id="detailedDiameter">4</span></td></tr>
 				<tr><td class="detailedKey">מספר ספרות</td><td id="detailedDigits" class="detailedValue">6</td></tr>
 				<tr><td class="detailedKey">פקטור</td><td id="detailedFactor" class="detailedValue">0.95</td></tr>
 				<tr><td class="detailedKey">גבול קריאה</td><td id="detailedLimit" class="detailedValue">700</td></tr>
@@ -68,18 +117,18 @@
 		</div>
 
 
-		<div class="Footer">
+		<div class="footer">
 			<div class="col span_footer_narrow">
 				<button id="bLeft">&lt;</button>
 			</div>
 			<div class="col span_footer_wide">
-				<button>SETUP</button>
+				<button id="bSetup">SETUP</button>
 			</div>
 			<div class="col span_footer_wide">
 				<button id="bDetails">DETAILS</button>
 			</div>
 			<div class="col span_footer_narrow">
-				<button id="bRight">&gt</button>
+				<button id="bRight">&gt;</button>
 			</div>
 		</div>
 		
