@@ -2,6 +2,9 @@ var DB_NAME='monedb';
 var DB_VERSION='1.0';
 var G_USERS = new Object();
 var G_METER;
+var DB_DATE = "DBTime";
+var DB_AGE_LIMIT = 14;
+var DB_hUPDATE = new db_updateHandler();
 
 function db_queryFunc(myFunc)
 {
@@ -24,6 +27,7 @@ function db_init()
 {
 	var db = openDatabase('monedb', '1.0', 'Water Meter DB', 2 * 1024 * 1024);
 	var msg;
+
 	db.transaction(function (tx) {
 	tx.executeSql('CREATE TABLE IF NOT EXISTS GENERAL(key TEXT unique, value TEXT)');
 	var sqlCmd = 'CREATE TABLE IF NOT EXISTS METERS(' +
@@ -57,11 +61,38 @@ function db_init()
 		'type_4 INTEGER)';
 	tx.executeSql(sqlCmd);
 		
-	tx.executeSql('CREATE TABLE IF NOT EXISTS USERS(id INTEGER unique, name TEXT COLLATE NOCASE, pwd TEXT)');
+	tx.executeSql('CREATE TABLE IF NOT EXISTS USERS(id TEXT unique, name TEXT COLLATE NOCASE, pwd TEXT)');
 	tx.executeSql('CREATE TABLE IF NOT EXISTS READINGS(time TEXT, meter_id INTEGER, meter_read INTEGER, commited INTEGER)');
+	
+	var dt = new Date();		// Now
+	db_addGeneral(DB_DATE, dt.toLocaleDateString());	
+	
+	var msg="בסיס הנתונים עודכן בהצלחה";
+	DB_hUPDATE.reset(alert(msg));
+
+
 //	msg = '<p>Log message created and row inserted.</p>';
 //	document.querySelector('#status').innerHTML =  msg;
-	},db_ERR, db_OK);
+	},db_ERR, db_initOK);
+}
+
+
+function db_initOK()
+{	
+//	var msg="בסיס הנתונים עודכן בהצלחה";
+//	DB_hUPDATE.reset(alert(msg));
+	db_OK();
+}
+
+
+function db_addMeterBase(id, qc, name, description, customer, iron, diameter, digits, factor, change_limit, gps_lat, gps_long, gps_alt)
+{
+	db_addMeter(id, qc, name, description, customer, iron, diameter, digits, factor, change_limit, gps_lat, gps_long, gps_alt, 
+		"time_0", 0, 0, 
+		"time_1", 1, 1, 
+		"time_2", 2, 2, 
+		"time_3", 3, 3, 
+		"time_4", 4, 4); 
 }
 
 function db_addMeter(id, qc, name, description, customer, iron, diameter, digits, factor, change_limit, gps_lat, gps_long, gps_alt, time_0, reading_0, type_0, time_1, reading_1, type_1, time_2, reading_2, type_2, time_3, reading_3, type_3, time_4, reading_4, type_4) 
@@ -70,14 +101,22 @@ function db_addMeter(id, qc, name, description, customer, iron, diameter, digits
 	var sqlCmd = 'INSERT INTO METERS VALUES(' + id + ','+qc+', "' + name + '", "' + description + '","' + customer + '",' + iron +','+diameter+','+digits+','+factor+','+change_limit+','+gps_lat+','+ gps_long+','+ gps_alt+',"'+ time_0+'",'+ reading_0+','+ type_0+',"'+ time_1+'",'+ reading_1+','+ type_1+',"'+ time_2+'",'+ reading_2+','+ type_2+',"'+ time_3+'",'+ reading_3+','+ type_3+',"'+ time_4+'",'+ reading_4+','+ type_4+')';
 	db.transaction(function (tx) {
 		tx.executeSql(sqlCmd);
-	},db_ERR, db_OK);		
+	},db_ERR2, db_OK);		
 }
 
+function db_addMeterReading(index, qc, date, value, type)
+{
+	var sqlCmd = 'UPDATE METERS SET time_' + index + '="'+ date + '", reading_' + index + '=' + value +', type_' + index + '='+ type +' WHERE qc=' + qc + ';';
+	var db = openDatabase('monedb', '1.0', 'Water Meter DB', 2 * 1024 * 1024);
+	db.transaction(function (tx) {
+		tx.executeSql(sqlCmd);
+	},db_ERR, db_OK);			
+}
 
 function db_addUser(id, name, pwd)
 {
 	var db = openDatabase('monedb', '1.0', 'Water Meter DB', 2 * 1024 * 1024);
-	var sqlCmd = 'INSERT INTO USERS VALUES(' + id + ', "' + name + '", "'+pwd+'")';
+	var sqlCmd = 'INSERT INTO USERS VALUES("' + id + '", "' + name + '", "'+pwd+'")';
 	db.transaction(function (tx) {
 		tx.executeSql(sqlCmd);
 	},db_ERR, db_OK);		
@@ -208,7 +247,7 @@ function db_catMeters(filter)
 function db_addGeneral(key, val)
 {
 	var db = openDatabase('monedb', '1.0', 'Water Meter DB', 2 * 1024 * 1024);
-	var sqlCmd = 'INSERT INTO GENERAL VALUES (' + key + ', ' + val + ')';
+	var sqlCmd = 'INSERT INTO GENERAL VALUES ("' + key + '", "' + val + '")';
 	db.transaction(function (tx) {
 /*		tx.executeSql(sqlCmd, function (tx, results) {
 	   		
@@ -220,7 +259,86 @@ function db_addGeneral(key, val)
 
 }
 
+function db_checkAge(ageInDays, tooOldFunction)
+{
+	var db = openDatabase('monedb', '1.0', 'Water Meter DB', 2 * 1024 * 1024);
+	var sqlCmd = 'SELECT * FROM GENERAL WHERE ( key = "' + DB_DATE + '");';
+	db.transaction(function (tx) {
+		tx.executeSql(sqlCmd,[], function(tx, results) {
+			var update;
+			var DEBUG_FORCE_UPDATE = false;
+			var len = results.rows.length, i;
+			
+			update = false;
+			if(len == 0 || DEBUG_FORCE_UPDATE)
+				update = true;
+			else
+			{
+				// 
+				var today = new Date();	// now
+				var dbDate = new Date(results.rows.item(0).value);
+				dbDate.setDate(dbDate.getDate()+ ageInDays);	// Set update date 
+				if(dbDate < today) 
+					update = true;
+			}; 
+
+			if(update) {
+				alert("בסיס הנתונים ישן מדי.\nמעדכן...");
+				tooOldFunction();
+			};
+		});
+	}, db_checkAgeERR, db_OK);
+	
+}
+
+function db_dummy(okCallback)
+{
+	var db = openDatabase('monedb', '1.0', 'Water Meter DB', 2 * 1024 * 1024);
+	var sqlCmd = 'SELECT * FROM GENERAL;';
+	db.transaction(function (tx) {
+		tx.executeSql(sqlCmd,[], function(tx, results) {
+				;	// do nothing with the result
+		});
+	}, db_ERR, okCallback);
+	
+}
+
+/*
+function db_checkAgeOK()
+{
+	var msg = "בסיס הנתונים עודכן בהצלחה";
+	// db_dummy(alert(msg));
+	setTimeout(function(){alert(msg);}, 2000);
+	db_OK();
+}
+*/
+
+function db_checkAgeERR(err)
+{
+	alert("בסיס הנתונים פגום.\nמאתחל...");
+	//tooOldFunction();
+	
+}
+
 function db_ERR(err)
+{
+  	console.log("DB Err # : " + err.code);
+    console.log("DB Err : " + err.message);
+}
+
+function db_ERR1(err)
+{
+  	console.log("DB Err # : " + err.code);
+    console.log("DB Err : " + err.message);
+}
+
+function db_ERR2(err)
+{
+  	console.log("DB Err # : " + err.code);
+    console.log("DB Err : " + err.message);
+}
+
+function db_ERR3(err)
 {
   	console.log("DB Err # : " + err.code);
     console.log("DB Err : " + err.message);
@@ -231,3 +349,48 @@ function db_OK()
 	console.log("DB: OK");
 }
 
+function db_updateHandler()
+{
+	var callback = function(){alert("1234567");};
+	var metersUpdated=false, readingsUpdated=false, usersUpdated=false, callbackDone=false;
+
+//	function trigger(callback, metersUpdated, readingsUpdated, usersUpdated, callbackDone)
+	var trigger = function()
+	{
+		if(!callbackDone && metersUpdated && readingsUpdated && usersUpdated)
+		{
+			callbackDone = true;
+			callback();
+		}
+	};
+	
+	this.reset = function(_callback)
+	{
+		callback=_callback; 
+		callbackDone =false; 
+		metersUpdated=false; 
+		readingsUpdated=false; 
+		usersUpdated=false;
+	};
+	
+	this.meters = function() 
+	{
+		metersUpdated=true; 
+		//trigger(callback, metersUpdated, readingsUpdated, usersUpdated, callbackDone);
+		trigger();
+	};
+
+	this.readings = function() 
+	{
+		readingsUpdated=true; 
+		//trigger(callback, metersUpdated, readingsUpdated, usersUpdated, callbackDone);
+		trigger();
+	};
+	
+	this.users = function() 
+	{
+		usersUpdated=true; 
+		//trigger(callback, metersUpdated, readingsUpdated, usersUpdated, callbackDone);
+		trigger();
+	};
+}

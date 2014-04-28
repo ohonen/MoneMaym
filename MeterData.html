@@ -6,16 +6,17 @@
 		<link rel="stylesheet" type="text/css" href="MeterData.css">
 		<meta charset="utf-8"/>
 		<meta name="author" content="Oren Honen - Software Maven" />
+		<script src="jquery-2.1.0.min.js"></script>
+		<script type="text/javascript" src="sqlite.js"></script>
+		<script type="text/javascript" src="WebService.js"></script>		
+		<script type="text/javascript" src="MeterData.js"></script>
+		
 	</head>
 
 	<body>
-		<script src="jquery-2.1.0.min.js"></script>
-		<script type="text/javascript" src="sqlite.js"></script>
-		<script type="text/javascript" src="MeterData.js"></script>
-		
 		<div class="topBar span_3_of_3">
 			<div class="topBarElement">
-				<button id="readws" type="button" onkeyup="readWS()">Read WS</button>
+				<button id="readws" type="button">Read WS2</button>
 			</div>
 			<button id="topHomeButton" class="topBarElement" onclick='window.location.href="MeterSearch.html";'>
 				<img id="homeImg" class="headButtonImg" src="Home_symbol.svg" alt="HOME"/>
@@ -47,8 +48,9 @@
 					<input class="cReadInput" type="number" id="currentRead" name="currentRead" onchange="currentReadAdjust(this.value)" onkeyup="currentReadAdjust(this.value)"/>
 					<span class="cReadAmount" id="readAmount">0</span>
 				</div>
-				<div class="cSubmitData">
-					<button class="cSubmitButton" id="submitButton" onclick="appendAndSendData()">שלח</button>
+				<div class="cSubmitData" id="mySubmitData">
+<!--					<button class="cSubmitButton" id="submitButton" onclick="appendAndSendData()">שלח</button>  -->
+					<button class="cSubmitButton" id="submitButton">שלח</button>
 				</div>
 			</form>
 			<div class="cTableData" id="tableData">

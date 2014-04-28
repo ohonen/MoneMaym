@@ -95,12 +95,20 @@ $(document).ready(function() {
 	
 	$("#readws").click(function() {
 		alert("Read WS was pressed");
-		readWS();
+		ws_getMeters();
+		ws_getReadings();
 	});
 	
 	$("#bSetup").click(function() {
 		window.location="SystemSetup.html";
 	});
+
+	
+    $("#mySubmitData").on("click", "#submitButton", function (e) {
+        e.preventDefault();
+    	appendAndSendData();
+    });
+
 
 	goTable();
 //	db_catReadings();
@@ -192,6 +200,9 @@ function appendAndSendData()
 	var now = new Date();
 	db_addReading(now, sessionStorage.meterId, $("#currentRead").val());
 	db_checkRead();
+	
+	ws_insertReading(sessionStorage.meterId, now.toISOString(), $("#currentRead").val(), "NONE");
+
 }
 	
 function db_checkRead()
@@ -208,14 +219,6 @@ function db_checkRead()
    				$("#currentRead").prop('disabled', true);
  			}
 	
-		   /*
-		   for (i = 0; i < len; i++)
-		   {
-		      //alert(results.rows.item(i).log );
-		   		var thisread = results.rows.item(i);
-				G_USERS[thisread.name] = thisread.pwd;
-		   }
-		   */
 		});
 	},db_ERR, db_OK);
 }
