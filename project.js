@@ -1,3 +1,6 @@
+localStorage.RADIUS_SETUP = localStorage.RADIUS_SETUP || 5;
+
+
 $(document).ready(function() {
 	$("#readws").click(function() {
 		alert("Read WS was pressed");
@@ -31,6 +34,18 @@ function showResult(str)
 xmlhttp.open("GET","livesearch.php?q="+str,true);
 xmlhttp.send();
 };
+
+function getLocation(callback)
+{
+	if (navigator.geolocation)
+	{
+		navigator.geolocation.getCurrentPosition(callback);
+	}
+	else
+	{
+		alert("Geolocation is not supported by this browser.");
+	}
+}
 
 
 function dataFilter(str)

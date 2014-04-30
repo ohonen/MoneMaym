@@ -6,7 +6,7 @@ $(document).ready(function() {
 function checkDbDate()
 {	
 	//db_checkAge(DB_AGE_LIMIT, TEST_initDB);
-	db_checkAge(0, initDB);
+	db_checkAge(DB_AGE_LIMIT, initDB);
 }
 
 function TEST_initDB()

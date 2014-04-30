@@ -1,17 +1,36 @@
+.cInputText {
+	height: 50%;
+} 
+
+.cInputField {
+	height: 100%;
+	width: 80%;
+}
 #Logo {
 	position: absolute; 
-	height: 50%;
-	width: 100%;
+	height: 40%;
+	width: 95%;
 	bottom: 0px;
-	background-color: orange;
+	/*background-color: orange;*/
 	/*alignment-adjust: central;*/	
 }
 
-#LogoImage {
+#LogoImageDiv {
+	float: right;
 	margin-right: auto;
 	margin-left: auto;
 	vertical-align: middle;
-	width: 20%;
+}
+
+#LogoImage {
+	float: right;
+	margin-right: auto;
+	margin-left: auto;
+	vertical-align: middle;
+	height: auto;
+	width: auto;
+	max-height: 100%;
+	max-width: 100%;
 }
 
 @media (orientation: portrait)

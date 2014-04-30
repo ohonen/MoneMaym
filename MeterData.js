@@ -1,5 +1,6 @@
 var monthNames = [ "ינואר", "פברואר", "מרץ", "אפריל", "מאי", "יוני",
     "יולי", "אוגוסט", "ספטמבר", "אוקטובר", "נובמבר", "דצמבר" ];
+var EQUATOR_LENGTH = 6378140;
 
 function readMeterOK()
 {
@@ -46,6 +47,32 @@ function readMeterOK()
 	$("#Reading2").html(G_METER.reading_2);
 	amountSet($("#Amount2"), G_METER.type_2, G_METER.reading_2, G_METER.reading_3, G_METER.change_limit);
 
+
+	// MAP
+	var centerLat = 32.6493626;
+	var centerLong = 35.0796944;
+	var centerStr = 'center=' + G_METER.gps_lat +',' + G_METER.gps_long;
+//	var centerStr = 'center=' + centerLat +',' + centerLong;
+	var zoom = 15;
+	var zoomStr = 'zoom=' + parseInt(getZoomForMetersWide(G_METER.gps_lat)); 
+	var src = "http://maps.googleapis.com/maps/api/staticmap?" + centerStr + "&" + zoomStr + "&size=500x300&markers=color:blue|label:11543|32.6853626,35.5726944&sensor=false";
+	$('#mapImage').attr('src', src);
+//	$('#Map').css('background-image', "url(http://maps.googleapis.com/maps/api/staticmap?' + centerStr + '&' + zoomStr + '&size=500x300&markers=color:blue|label:11543|32.6853626,35.5726944&sensor=false)");
+
+}
+
+
+function getZoomForMetersWide (latitude)
+ // final double desiredMeters,
+ // final double mapWidth,
+ // final double latitude )
+{
+	var mapWidth = 500;
+  var latitudinalAdjustment = Math.cos( Math.PI * latitude / 180.0 );
+
+  var arg = EQUATOR_LENGTH * mapWidth * latitudinalAdjustment / ( localStorage.RADIUS_SETUP * 256.0 * 1000.0);	// * 256.0
+
+  return Math.log( arg ) / Math.log( 2.0 );
 }
 
 function currentReadAdjust(value)
@@ -84,6 +111,9 @@ function amountSet(elem, type, curRead, prevRead, limit)
 }
 
 $(document).ready(function() {
+	// upload all uncomitted
+	ws_uploadUncommitedReadings();
+		
 	db_readMeter(readMeterOK);
 	
 	$("#User").html(sessionStorage.User);
@@ -192,13 +222,16 @@ $(document).ready(function() {
 		
 	}
 	
+	
 });
 
 
-function appendAndSendData()
+function appendAndSendData(now)
 {
-	var now = new Date();
-	db_addReading(now, sessionStorage.meterId, $("#currentRead").val());
+	if(now==undefined)
+		now = new Date();
+		
+	db_addReading(now.toISOString(), sessionStorage.meterId, $("#currentRead").val());
 	db_checkRead();
 	
 	ws_insertReading(sessionStorage.meterId, now.toISOString(), $("#currentRead").val(), "NONE");
@@ -223,4 +256,42 @@ function db_checkRead()
 	},db_ERR, db_OK);
 }
 
+storeLocation.meterGeoData;
+function storeLocation()
+{
+	//getLocationCallback = new storeLocationCallback();
+	getLocation(storeLocationCallback);
+}
 
+function storeLocationCallback(position)
+{
+	//var locationComplete = new storeLocationUploadComplete();
+	var gpsLat = position.coords.latitude || 0;
+	var gpsLong = position.coords.longitude || 0;
+	var gpsAlt = position.coords.altitude || 0;
+	storeLocation.meterGeoData = {'id': G_METER.unit_name, 'LAT':gpsLat, 'LONG':gpsLong, 'ALT': gpsAlt};
+	// Update center
+	ws_uploadCurrentLocation(storeLocation.meterGeoData, storeLocationUploadComplete);
+}
+
+function storeLocationUploadComplete(xmlHttpRequest, status)
+{
+	var forceTrue=true; // TBR after debug
+	if(xmlHttpRequest.responseText == "true" || forceTrue)
+	{
+		// update local db
+		db_saveCurrentLocation(storeLocation.meterGeoData);
+	 	console.log("storeLocation Complete");				
+	}
+	else
+	{
+		//setTimeout(ws_insertReading(this.url), UPDATE_TIMEOUT);
+		console.log("storeLocation is unsuccessful.");	
+	}
+}
+
+function showPosition(position)
+{
+	x.innerHTML = "Latitude: " + position.coords.latitude + 
+	"<br>Longitude: " + position.coords.longitude; 
+}

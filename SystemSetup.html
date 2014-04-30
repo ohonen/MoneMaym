@@ -13,6 +13,7 @@
 
 		<script src="jquery-2.1.0.min.js"></script>
 		<script type="text/javascript" src="sqlite.js"></script>
+		<script type="text/javascript" src="project.js"></script>
 		<script type="text/javascript" src="SystemSetup.js"></script>
 
 	</head>
@@ -32,7 +33,7 @@
 		</div>
 
 		<div class="center">
-			<form oninput="amount.value=parseFloat(radius.value)/10;">	
+			<form oninput="amount.value=setRadius(radius.value);">	
 				<p>רדיוס חיפוש:
 					<output name="amount" for="radius">0</output>
 				</p>

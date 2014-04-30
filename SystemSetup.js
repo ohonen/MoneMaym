@@ -11,3 +11,9 @@ $(document).ready(function() {
 
 
 });
+
+function setRadius(radius)
+{
+	localStorage.RADIUS_SETUP = parseFloat(radius)/10;
+	return localStorage.RADIUS_SETUP;
+}
