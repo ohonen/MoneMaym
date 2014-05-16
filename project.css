@@ -1,6 +1,6 @@
 html {
-	height: 97%;
-	width: 95%;
+	height: 100%;
+	width: 100%;
 	direction: rtl;
 } 
 
@@ -10,22 +10,32 @@ body {
 	background-color:#FFEEBB;
 	direction: rtl;
 	font-size: 200%;
+	margin: 0%;
 }
 
 
 table {
-	width: 90%;
+	width: 100%;
 	margin: 1%;
 	text-align: center;
+	overflow-y: scroll;
+}
+
+button {
+	border: 5px solid black;
+	background: linear-gradient(#BBBBFF, #6666FF);
+	border-radius: 10px;
 }
 
 .topBar {
-	height: 10%;
-	text-align:right; 
+	position: fixed;
+	top: 0%;
+	float: left;
+	height: 5%;
 	width:100%; 
-	right:3%;
-	direction: rtl;
-	float: right;
+	font-size: 200%;
+	background: orange;
+	margin: 0%;
 }
 
 .topBarElement {
@@ -49,46 +59,55 @@ table {
 }
 
 .header {
-	height:30%;
+	position: fixed;
+	top: 5%;
+	float: right;
+	height:20%;
 	width: 100%;
 /*	margin: auto; */
+	background: blue;
 }
 
 .center
 {
-	height:40%;
+	position:fixed;
+	top: 25%;
+	height:70%;
 	width:100%;
-/*	float: left; */
+	float: left; 
+	background: linear-gradient(#BBBBFF,#8866FF);
+	overflow-y: scroll;
 }
 
 .footer
 {
+	position: fixed;
+	bottom: 0px;
+	height: 5%;
  	width: 100%;
-	bottom: 2px;
-	height:10%;
+	background: orange;
 }
 
 /* GRID of Footer <narrow><wide><wide><narrow> */
 .span_footer_narrow {
 	float: left;
-	width:15%;
-	font-weight: bold;	
-	display: block;
-	margin: auto;
+	height: 100%;
+	width:20%;
+	background: blue;
 }
 
 .span_footer_wide {
 	float: left;
 	width:30%;
-	display: block;
-	margin: auto;
+	height: 100%;
+	background: gray;
 }
 
 .footerButton
 {
 	margin: auto;
 	display: block;
-	font-size:100%;
+	/*font-size:200%;*/
 }
 
 .large {
@@ -130,45 +149,20 @@ table {
 @media (orientation: landscape)
 {
 	
-}
+	body {
+		font-size: 100%;
+	}
+	
+	.topBar {
+		font-size: 100%;
+		height: auto;
+		padding: 0%;
+	}
+	
+	.header {
+		height: auto;
+	}
 
-/*
-.Button {
-	width: 40%;
-	margin: 1px;
-	padding: 2% 0%;
-	color: #FF0000;
-	background-color:#EEEEEE;
-	text-align: center; 
-	line-height:100%;
-	vertical-align: middle;	
-	border-width: 2px;
-	border-color: #000000;
-	border-style: solid;
-	border-radius: 5px;
-	box-shadow:10px 10px 5px #888888;
-	transition: background-color 0.5s;
-	transition: box-shadow 0.3s;
-	position: absolute;
-	font-size:300%;
+	
 }
-
-.Button:hover {
-	color: #0000FF;	
-	background-color:#FFEEEE;
-
-}
-
-.Button:active {
-	box-shadow:2px 2px 2px #888888;
-
-}
-*/
-/*
-#abox {
-	height: 100px;
-	width:100px;
-	background-color:gray;
-}
-*/
 

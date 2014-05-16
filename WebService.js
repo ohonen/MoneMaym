@@ -37,7 +37,7 @@ function ws_updateAllMeters(xmlHttpRequest, status)
 				meter.GPS_LAT, meter.GPS_LONG, meter.GPS_ALT);
 
 	}).promise().done(function(){	// When all meters read and schedule for DB insert
-		alert("meters read"); 
+		/*alert("meters read");*/ 
 		DB_hUPDATE.meters();
 		ws_getLastReadings();	// read latest readings
 	});
@@ -74,7 +74,7 @@ function ws_updateAllMetersReadings(xmlHttpRequest, status)
 		var date = new Date(parseInt(dateNum));
 		var type = 0; // MISSING
 		db_addMeterReading(index%4, reading.IoId, date.toLocaleDateString(),reading.Value, type);
-	}).promise().done(function(){alert("readings read"); DB_hUPDATE.readings();});
+	}).promise().done(function(){/*alert("readings read");*/ DB_hUPDATE.readings();});
 					
 
 }
@@ -107,7 +107,7 @@ function ws_updateAllUsers(xmlHttpRequest, status)
 		db_addUser(user.UserId, user.UserName, user.Password);
 		//db_addUser(4,"אופיר", "123");
 
-	}).promise().done(function(){alert("users read"); DB_hUPDATE.users();});
+	}).promise().done(function(){/*alert("users read");*/ DB_hUPDATE.users();});
 					
 
 }

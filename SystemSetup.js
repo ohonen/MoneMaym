@@ -1,4 +1,7 @@
 $(document).ready(function() {
+	$("#User").html(sessionStorage.User);
+
+
 	$("#bSetup").click(function() {
 		parent.history.back();
         return false;

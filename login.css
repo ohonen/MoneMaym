@@ -1,11 +1,17 @@
+.center {
+	height: 40%;	
+}
+
 .cInputText {
-	height: 50%;
+	font-size: 200%;
+	margin:0%;
 } 
 
 .cInputField {
-	height: 100%;
-	width: 80%;
+	width: 50%;
+	font-size: 200%;
 }
+
 #Logo {
 	position: absolute; 
 	height: 40%;
@@ -16,21 +22,18 @@
 }
 
 #LogoImageDiv {
-	float: right;
+	float: left;
 	margin-right: auto;
 	margin-left: auto;
-	vertical-align: middle;
+	height:100%;
+	width: auto;
+/*	vertical-align: middle; */
 }
 
 #LogoImage {
-	float: right;
-	margin-right: auto;
-	margin-left: auto;
 	vertical-align: middle;
-	height: auto;
+	height: 100%;
 	width: auto;
-	max-height: 100%;
-	max-width: 100%;
 }
 
 @media (orientation: portrait)
@@ -40,5 +43,5 @@
 
 @media (orientation: landscape)
 {
-	
+
 }

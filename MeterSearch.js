@@ -134,14 +134,14 @@ function buildMetersTable(filter)
 
 function rowsBuilderTask(meter)
 {
-	var $tdUnitName = $('<td>');
+	var $tdUnitName = $('<td>', { class: "cMeterIdData"});
 	var $form = $('<form action="MeterData.html" onSubmit=Mone("' + meter.unit_number + '")/>');
 	var $input = $('<input>', { class:"cMeterId",  type:"submit", value: meter.unit_name });
 	$input.appendTo($form);
 	$form.appendTo($tdUnitName);
 	
 	$("#metersTable").append(
-		$('<tr>').append(
+		$('<tr>', {class:"cMeterRow"}).append(
 			$tdUnitName,
 			$('<td  class="cCustomerName">').text(meter.customer_name),
 			$('<td>').text(meter.description)

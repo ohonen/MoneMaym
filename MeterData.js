@@ -21,7 +21,7 @@ function readMeterOK()
 	$("#detailedIron").html(G_METER.iron_number);		
 	$("#detailedDiameter").html(G_METER.diameter);		
 	$("#detailedDigits").html(G_METER.digits);		
-	$("#detailedFactor").html(G_METER.factor);		
+	$("#detailedFactor").html(G_METER.factor.toFixed(3));		
 	$("#detailedLimit").html(G_METER.change_limit);	
 	
 	// *** Table data
@@ -30,21 +30,21 @@ function readMeterOK()
 	$("#Date0").html(myDate0.toLocaleDateString());
 	myDate0.setDate(myDate0.getDate()-10);	// set 10 days back	
 	$("#Month0").html(monthNames[myDate0.getMonth()]);	
-	$("#Reading0").html(G_METER.reading_0);
+	$("#Reading0").html(G_METER.reading_0.toFixed(2));
 	amountSet($("#Amount0"), G_METER.type_0, G_METER.reading_0, G_METER.reading_1, G_METER.change_limit);
 
 	var myDate1 = new Date(G_METER.time_1);
 	$("#Date1").html(myDate1.toLocaleDateString());	
 	myDate1.setDate(myDate1.getDate()-10);	// set 10 days back	
 	$("#Month1").html(monthNames[myDate1.getMonth()]);	
-	$("#Reading1").html(G_METER.reading_1);
+	$("#Reading1").html(G_METER.reading_1.toFixed(2));
 	amountSet($("#Amount1"), G_METER.type_1, G_METER.reading_1, G_METER.reading_2, G_METER.change_limit);
 
 	var myDate2 = new Date(G_METER.time_2);
 	$("#Date2").html(myDate2.toLocaleDateString());	
 	myDate2.setDate(myDate2.getDate()-10);	// set 10 days back	
 	$("#Month2").html(monthNames[myDate2.getMonth()]);	
-	$("#Reading2").html(G_METER.reading_2);
+	$("#Reading2").html(G_METER.reading_2.toFixed(2));
 	amountSet($("#Amount2"), G_METER.type_2, G_METER.reading_2, G_METER.reading_3, G_METER.change_limit);
 
 
@@ -54,8 +54,9 @@ function readMeterOK()
 	var centerStr = 'center=' + G_METER.gps_lat +',' + G_METER.gps_long;
 //	var centerStr = 'center=' + centerLat +',' + centerLong;
 	var zoom = 15;
-	var zoomStr = 'zoom=' + parseInt(getZoomForMetersWide(G_METER.gps_lat)); 
-	var src = "http://maps.googleapis.com/maps/api/staticmap?" + centerStr + "&" + zoomStr + "&size=500x300&markers=color:blue|label:11543|32.6853626,35.5726944&sensor=false";
+	var zoomStr = 'zoom=' + parseInt(getZoomForMetersWide(G_METER.gps_lat));
+	var size = 'size=' + 800 + 'x' + 500; 
+	var src = "http://maps.googleapis.com/maps/api/staticmap?" + centerStr + "&" + zoomStr + "&" + size + "&markers=color:blue|label:11543|32.6853626,35.5726944&sensor=false";
 	$('#mapImage').attr('src', src);
 //	$('#Map').css('background-image', "url(http://maps.googleapis.com/maps/api/staticmap?' + centerStr + '&' + zoomStr + '&size=500x300&markers=color:blue|label:11543|32.6853626,35.5726944&sensor=false)");
 
@@ -94,7 +95,7 @@ function amountSet(elem, type, curRead, prevRead, limit)
 		case 0:	// normal read
 		case 2: // last old meter read
 			var amount = curRead - prevRead;
-			elem.html(amount);
+			elem.html(amount.toFixed(2));
 			if(amount>0 && amount<=limit)
 				elem.css("background-color", "green");
 			else
@@ -154,6 +155,7 @@ $(document).ready(function() {
 		$("#tableDetails").hide();
 		$("#switchOver").hide();
 		$("#tableData").show();
+		$(".cReadForm").show();
 
 		$("#headButton").click(function() {
 			goGPS();	
@@ -169,6 +171,7 @@ $(document).ready(function() {
 	function goGPS() {
 		$("#gpsImg").hide();
 		$("#tableImg").show();
+		$(".cReadForm").show();
 		
 		$("#tableData").hide();
 		document.getElementById("Map").style.display = 'inline';
@@ -190,7 +193,8 @@ $(document).ready(function() {
 		$("#tableData").hide();
 		$("#switchOver").hide();
 		$("#tableDetails").show();
-		
+		$(".cReadForm").show();
+	
 		$("#bDetails").html("החלפה");
 		$("#bDetails").click(function() {
 			goSwitch();	
@@ -211,6 +215,7 @@ $(document).ready(function() {
 
 		$("#tableDetails").hide();
 		$("#switchOver").show();
+		$(".cReadForm").hide();
 
 		$("#bDetails").html("פרטים");
 		$("#bDetails").click(function() {

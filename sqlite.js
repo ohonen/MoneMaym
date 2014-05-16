@@ -3,7 +3,7 @@ var DB_VERSION='1.0';
 var G_USERS = new Object();
 var G_METER;
 var DB_DATE = "DBTime";
-var DB_AGE_LIMIT = 0;
+var DB_AGE_LIMIT = 1;
 var DB_hUPDATE = new db_updateHandler();
 
 function db_queryFunc(myFunc)
@@ -12,7 +12,7 @@ function db_queryFunc(myFunc)
 	db.transaction(myFunc(tx) , db_ERR, db_OK );
 }
 
-function db_deleteDB()
+function db_deleteDB(callback)
 {
 	var db = openDatabase('monedb', '1.0', 'Water Meter DB', 2 * 1024 * 1024);
 	db.transaction(function (tx) {
@@ -20,10 +20,10 @@ function db_deleteDB()
 		tx.executeSql('DROP TABLE IF EXISTS METERS');
 		tx.executeSql('DROP TABLE IF EXISTS USERS');
 		tx.executeSql('DROP TABLE IF EXISTS READINGS');
-	},db_ERR, db_OK);
+	},db_ERR, callback);
 }
 
-function db_init()
+function db_init(callback)
 {
 	var db = openDatabase('monedb', '1.0', 'Water Meter DB', 2 * 1024 * 1024);
 	var msg;
@@ -68,13 +68,10 @@ function db_init()
 	var dt = new Date();		// Now
 	db_addGeneral(DB_DATE, dt.toLocaleDateString());	
 	
-	var msg="בסיס הנתונים עודכן בהצלחה";
-	DB_hUPDATE.reset(alert(msg));
-
 
 //	msg = '<p>Log message created and row inserted.</p>';
 //	document.querySelector('#status').innerHTML =  msg;
-	},db_ERR, db_initOK);
+	},db_ERR, callback);
 }
 
 
@@ -124,12 +121,17 @@ function db_addUser(id, name, pwd)
 	
 }
 
-function db_checkUser(uname, password)
+function db_checkUser(uname, password, PASS_Callback, FAIL_Callback)
 {
 	var db = openDatabase('monedb', '1.0', 'Water Meter DB', 2 * 1024 * 1024);
 	var sqlCmd = 'SELECT * FROM USERS WHERE name = "' + uname + '" AND pwd = "' + password + '";';
 	db.transaction(function (tx) {
-		tx.executeSql(sqlCmd);
+		tx.executeSql(sqlCmd, [], function (tx, results) {
+			if(results.rows.length>0)	// is 0 or 1
+				PASS_Callback(results.rows.item(0).name);
+			else
+				FAIL_Callback();
+		});
 	},db_ERR, db_OK);		
 }
 
@@ -348,11 +350,14 @@ function db_checkAge(ageInDays, tooOldFunction)
 			}; 
 
 			if(update) {
-				alert("בסיס הנתונים ישן מדי.\nמעדכן...");
+				alert("בסיס הנתונים אינו מעודכן.\nמעדכן...");
 				tooOldFunction();
 			};
 		});
-	}, db_checkAgeERR, db_OK);
+	}, function(err){
+		alert("בסיס הנתונים חדש או לא תקין.\nמאתחל...");
+		tooOldFunction();
+	}, db_OK);
 	
 }
 
@@ -383,7 +388,7 @@ function db_updateCommit(id)
 function db_checkAgeERR(err)
 {
 	alert("בסיס הנתונים פגום.\nמאתחל...");
-	//tooOldFunction();
+	tooOldFunction();
 	
 }
 
@@ -441,9 +446,9 @@ function db_updateHandler()
 	var metersUpdated=false, readingsUpdated=false, usersUpdated=false, callbackDone=false;
 
 //	function trigger(callback, metersUpdated, readingsUpdated, usersUpdated, callbackDone)
-	var trigger = function()
+	this.trigger=function()
 	{
-		if(!callbackDone && metersUpdated && readingsUpdated && usersUpdated)
+		if(callback && !callbackDone && metersUpdated && readingsUpdated && usersUpdated)
 		{
 			callbackDone = true;
 			callback();
@@ -463,20 +468,20 @@ function db_updateHandler()
 	{
 		metersUpdated=true; 
 		//trigger(callback, metersUpdated, readingsUpdated, usersUpdated, callbackDone);
-		trigger();
+		this.trigger();
 	};
 
 	this.readings = function() 
 	{
 		readingsUpdated=true; 
 		//trigger(callback, metersUpdated, readingsUpdated, usersUpdated, callbackDone);
-		trigger();
+		this.trigger();
 	};
 	
 	this.users = function() 
 	{
 		usersUpdated=true; 
 		//trigger(callback, metersUpdated, readingsUpdated, usersUpdated, callbackDone);
-		trigger();
+		this.trigger();
 	};
 }

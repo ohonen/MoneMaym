@@ -21,8 +21,8 @@
 			<div class="topBarElement">
 				<button id="readws" type="button">Read WS2</button>
 			</div>
-			<button id="topHomeButton" class="topBarElement" onclick='window.location.href="MeterSearch.html";'>
-				<img id="homeImg" class="headButtonImg" src="Home_symbol.svg" alt="HOME"/>
+			<button id="topHomeButton" class="topBarElement topBarHome" onclick='window.location.href="MeterSearch.html";'>
+				<img id="homeImg" class="topBarHomeImage" src="Home_symbol.svg" alt="HOME"/>
 			</button>
 			<div id="User" class="span_1_of_3 topBarElement">Moti Cohen</div>
 			<div class="span_1_of_3 topBarElement" id="logoutDiv">
@@ -108,7 +108,7 @@
 				<tr><td class="detailedKey">גבול קריאה</td><td id="detailedLimit" class="detailedValue">700</td></tr>
 			</table>
 			<form>
-				<div id="switchOver">
+				<div id="switchOver" class="cSwitchOver">
 					<div class="col newOldTile">
 						ישן
 					</div>
@@ -127,17 +127,17 @@
 
 
 		<div class="footer">
-			<div class="col span_footer_narrow">
-				<button id="bLeft">&lt;</button>
+			<div class="span_footer_narrow">
+				<button id="bLeft" class="footerButton">&gt;</button>
 			</div>
-			<div class="col span_footer_wide">
-				<button id="bSetup">SETUP</button>
+			<div class="span_footer_wide">
+				<button id="bSetup" class="footerButton">SETUP</button>
 			</div>
-			<div class="col span_footer_wide">
-				<button id="bDetails">DETAILS</button>
+			<div class="span_footer_wide">
+				<button id="bDetails" class="footerButton">DETAILS</button>
 			</div>
-			<div class="col span_footer_narrow">
-				<button id="bRight">&gt;</button>
+			<div class="span_footer_narrow">
+				<button id="bRight" class="footerButton">&lt;</button>
 			</div>
 		</div>
 		

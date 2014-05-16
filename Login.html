@@ -16,10 +16,10 @@
 
 		<!-- <div class="Head"></div> -->
 		<div id="Content" class="center large" >
-			<form onsubmit="checkUser()" style="height:15%;">
-				<p class="cInputText">שם:    </p><input class="cInputField" type="text" id="uname" name="username"><br>
-				<p class="cInputText">סיסמא: </p><input class="cInputField" type="password" id="pwd" name="password"><br><br>
-				<input type="button" value="כניסה" onclick="checkUser(this.form)" style="font-size:200%;">
+			<form onsubmit="checkUser()">
+				<div class="inputDiv"><p class="cInputText">שם:    </p><input class="cInputField" type="text" id="uname" name="username"><br></div>
+				<div class="inputDiv"><p class="cInputText">סיסמא: </p><input class="cInputField" type="password" id="pwd" name="password"><br><br></div>
+				<input id="loginButton" type="button" value="כניסה" onclick="checkUser(this.form)" style="font-size:200%;">
 			</form>
 			
 		</div>

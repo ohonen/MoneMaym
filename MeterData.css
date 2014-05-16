@@ -1,6 +1,20 @@
+.topBarHome {
+	height: 10%;
+}
+
+.topBarHomeImage {
+	height: 5%;
+	width: auto;
+}
+
+.header {
+	font-size: 200%;
+	padding: 1%;
+}
+
 .headButtonDiv {
 	float: left;
-	width:20%;
+	width:25%;
 	height:60%;
 }
 
@@ -50,12 +64,10 @@
 #headDetails
 {
 	width: 100%;
+	font-size: 70%;
 }
 
 .center {
-	margin:0%;
-	padding:1%;
-	
 /*	background: #888888; */
 }
 
@@ -63,6 +75,7 @@
 	float:right;
 	width: 100%;
 	background-color: #FFDDBB;
+	font-size: 200%;
 }
 
 .cReadData {
@@ -106,6 +119,7 @@
 	float: left;
 	width: 100%;
 	margin: 0%;
+	font-size:150%;
 }
 
 .detailedKey {
@@ -119,11 +133,15 @@
 .detailedValue {
 	font-weight: bold;
 	padding: 2%;
+	font-size:130%;
 	
 }
 
 #tableDetails {
 	text-align:right;
+}
+
+.cSwitchOver {
 }
 
 .newOldTile {
@@ -133,18 +151,22 @@
 	margin: 1%;
 	text-align: right;
 	float:right;
+	font-size: 200%;
 }
 
 .switchInputLine {
-	width: 20%;
+	width: 40%;
 	text-align: right;
 	float: right;
+	font-size: 170%;
+	margin: 0% 1%;
 }
 
 .switchInput {
 	width:40%;
 	float: right;
 	display: block;
+	font-size: 170%;
 }
 
 .placeHolder {
@@ -163,7 +185,22 @@
 }
 
 .cSaveLocation {
-	height: 25%;
+	height: 40%;
 	vertical-align: top;
 }
 
+.footer {
+	font-size: larger;
+}
+
+.footerButton {
+	font-size: 50%;
+}
+
+@media (orientation: landscape)
+{
+	.center {
+		height: 50%;
+		overflow-y: scroll;
+	}
+}

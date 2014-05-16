@@ -1,6 +1,5 @@
 $(document).ready(function() {
 	checkDbDate();
-	db_readUsers();
 });
 
 function checkDbDate()
@@ -33,15 +32,15 @@ function TEST_initDB()
 
 function initDB()
 {
-
-	db_deleteDB();
-	db_init();
-	db_addUser("MY","אופיר", "123");
-	
-	// update meters, readings and users
- 	ws_getAllMeters();
- 	// ws_getLastReadings();
- 	ws_getAllUsers();
+	$("#loginButton").attr('disabled','disabled');
+	db_deleteDB(function(){
+		console.log("DB Deleted.");
+		db_init(function(){
+			console.log("DB Initialized.");
+			buildDB();
+		});
+		
+	});
 
 	// "MasofonService.asmx/InsertReading?ioId=1&comments="Oren"&readingTime=2014-4-15%2012:00:02&value=34567"
 	// ws_insertReading(1, "2014-4-15%2012:00:02", 34567, "Oren"); 	
@@ -56,17 +55,40 @@ function initDB()
  
 }
 
+function buildDB(callback)
+{
+	db_addUser("MY","אופיר", "123");
+
+	DB_hUPDATE.reset(function(){	// triggered when all vars updated
+		var msg="בסיס הנתונים עודכן בהצלחה";
+		alert(msg);
+		$("#loginButton").removeAttr('disabled');
+	});
+
+	// update meters, readings and users
+ 	ws_getAllMeters();
+ 	// ws_getLastReadings();
+ 	ws_getAllUsers();
+	db_readUsers();
+
+	console.log("build DB started.");
+
+ 	if(callback)
+		callback();
+}
+
 function checkUser(form)
 {
-	if(G_USERS[form.uname.value] == form.pwd.value)
-	{
-		sessionStorage.User = form.uname.value;
-		window.location="MeterSearch.html";				
-	}
-	else
-	{
-		alert("שם משתמש או סיסמא שגויים");
-	}
+	db_checkUser(form.uname.value, form.pwd.value, 
+		function(){
+			sessionStorage.User = form.uname.value;
+			window.location="MeterSearch.html";
+		}, 
+		function()
+		{
+			alert("שם משתמש או סיסמא שגויים");
+		}
+	);
 }
 
 
