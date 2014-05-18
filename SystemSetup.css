@@ -21,7 +21,8 @@ input
 .center
 {
 	direction: rtl;
-	height: 70%;
+	height: 90%;
+	top: 5%;
 }
 
 input[type='range'] {

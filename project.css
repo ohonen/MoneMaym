@@ -43,14 +43,6 @@ button {
 	text-align: center;	
 }
 
-#topHomeButton {
-	height: 50%;
-}
-
-#logoutDiv {
-	text-align: left;
-}
-
 #readws
 {
 	height: 100%;
@@ -93,21 +85,19 @@ button {
 	float: left;
 	height: 100%;
 	width:20%;
-	background: blue;
 }
 
 .span_footer_wide {
 	float: left;
 	width:30%;
 	height: 100%;
-	background: gray;
 }
 
 .footerButton
 {
 	margin: auto;
 	display: block;
-	/*font-size:200%;*/
+	font-size:150%;
 }
 
 .large {

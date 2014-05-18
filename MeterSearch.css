@@ -79,7 +79,7 @@
 }
 
 .cMeterId {
-	font-size: larger;	
+	font-size: 200%;	
 	border: 5px solid black;
 	background: linear-gradient(#BBBBFF, #6666FF);
 	border-radius: 10px;
@@ -94,9 +94,10 @@
 
 .footer
 {
-	font-size: larger;
 }
 
+.footerButton {
+}
 
 @media (orientation: landscape)
 {

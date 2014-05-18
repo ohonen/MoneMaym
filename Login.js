@@ -1,5 +1,16 @@
 $(document).ready(function() {
 	checkDbDate();
+	
+	$(".cInputField").focusin(function() {
+		$("body").css({fontSize:"200%"});
+		$("#Logo").hide();		
+	});
+
+	$(".cInputField").focusout(function() {
+//		$("body").css({fontSize:"100%"});
+		$("#Logo").show();		
+	});
+
 });
 
 function checkDbDate()
@@ -42,17 +53,6 @@ function initDB()
 		
 	});
 
-	// "MasofonService.asmx/InsertReading?ioId=1&comments="Oren"&readingTime=2014-4-15%2012:00:02&value=34567"
-	// ws_insertReading(1, "2014-4-15%2012:00:02", 34567, "Oren"); 	
-
-	//ws_getMeters();
-	//ws_getReadings();
-	//ws_getUsers();
-	
-	// Example by Evgeny
-    //makeCorsRequest();
-    //makeJRequest();
- 
 }
 
 function buildDB(callback)

@@ -6,6 +6,7 @@
 		<link rel="stylesheet" type="text/css" href="MeterData.css">
 		<meta charset="utf-8"/>
 		<meta name="author" content="Oren Honen - Software Maven" />
+		<meta name='viewport' content='user-scalable=0'>
 		<script type="text/javascript" src="gmaps.api.js"></script>
 		<script type="text/javascript" src="jquery-2.1.0.min.js"></script>
 		<script type="text/javascript" src="jquery.ui.map.js"></script>
@@ -18,14 +19,13 @@
 
 	<body>
 		<div class="topBar span_3_of_3">
-			<div class="topBarElement">
-				<button id="readws" type="button">Read WS2</button>
+			<div class="span_1_of_3 topBarElement">
+				<button id="topHomeButton" class="topBarHome" onclick='window.location.href="MeterSearch.html";'>
+					<img id="homeImg" class="topBarHomeImage" src="Home_symbol.svg" alt="HOME"/>
+				</button>
 			</div>
-			<button id="topHomeButton" class="topBarElement topBarHome" onclick='window.location.href="MeterSearch.html";'>
-				<img id="homeImg" class="topBarHomeImage" src="Home_symbol.svg" alt="HOME"/>
-			</button>
 			<div id="User" class="span_1_of_3 topBarElement">Moti Cohen</div>
-			<div class="span_1_of_3 topBarElement" id="logoutDiv">
+			<div class="span_1_of_3 topBarElement">
 				<a href="Login.html">צא</a>
 			</div>			
 		</div>

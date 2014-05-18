@@ -1,5 +1,6 @@
-.center {
-	height: 40%;	
+.header {
+	top: 0%;
+	height: 50%;
 }
 
 .cInputText {
@@ -12,28 +13,23 @@
 	font-size: 200%;
 }
 
-#Logo {
-	position: absolute; 
-	height: 40%;
-	width: 95%;
-	bottom: 0px;
-	/*background-color: orange;*/
-	/*alignment-adjust: central;*/	
+.center {
+	height: 50%;
+	top: auto;
+	bottom: 0%;	
+	overflow-y: auto;
+	margin: auto;
 }
 
-#LogoImageDiv {
-	float: left;
-	margin-right: auto;
-	margin-left: auto;
-	height:100%;
-	width: auto;
-/*	vertical-align: middle; */
-}
 
 #LogoImage {
+	display: block;
 	vertical-align: middle;
-	height: 100%;
-	width: auto;
+	margin: auto;
+	max-width: 100%;
+	max-height: 100%;
+	width: 100%;
+	height: auto;
 }
 
 @media (orientation: portrait)
@@ -43,5 +39,18 @@
 
 @media (orientation: landscape)
 {
+	.header {
+		height: 70%;
+	}
+	
+	.center {
+		height: 30%;
+	}
+	
+	#LogoImage {
+		width: auto;
+		height: 100%;
+}
+
 
 }

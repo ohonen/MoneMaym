@@ -81,7 +81,7 @@ function currentReadAdjust(value)
 	// Amount Format
 	var currentAmount = value - G_METER.reading_0;
 	var elem = $("#readAmount");
-	elem.html(currentAmount);
+	elem.html(currentAmount.toFixed(2));
 	if(currentAmount>0 && currentAmount<=G_METER.change_limit)
 		elem.css("background-color", "green");
 	else
@@ -139,7 +139,6 @@ $(document).ready(function() {
         e.preventDefault();
     	appendAndSendData();
     });
-
 
 	goTable();
 //	db_catReadings();
@@ -227,7 +226,32 @@ $(document).ready(function() {
 		
 	}
 	
+	$("#currentRead").focusin(function() {
+		$("body").css({fontSize:"200%"});
+		$(".header").css({
+			"height":"30%"
+		});
+		$(".center").css({
+			"top": "35%",
+			"height": "65%"
+		});
+		$(".footer").hide();
+
+	});
 	
+	$("#currentRead").focusout(function() {
+		$("body").css({fontSize:"200%"});
+		$(".header").css({
+			"height":"20%"
+		});
+		$(".center").css({
+			"top": "25%",
+			"height": "70%"
+		});
+		$(".footer").show();
+	});
+
+
 });
 
 

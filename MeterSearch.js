@@ -28,6 +28,32 @@ $(document).ready(function() {
 	
 	//$("#bUnread").click(function(){filterRead();});
 	
+	$(".cFormInput").focusin(function() {
+		$("body").css({fontSize:"200%"});
+		$(".header").css({
+			"height":"30%"
+		});
+		$(".center").css({
+			"top": "35%",
+			"height": "65%"
+		});
+		$(".footer").hide();
+	});
+
+	$(".cFormInput").focusout(function() {
+		$("body").css({fontSize:"200%"});
+		$(".header").css({
+			"height":"20%"
+		});
+		$(".center").css({
+			"top": "25%",
+			"height": "70%"
+		});
+		$(".footer").show();
+	});
+
+
+
 	updateDistances();
 	//db_catMeters(false);
 	buildMetersTable();	
