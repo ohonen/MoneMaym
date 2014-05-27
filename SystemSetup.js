@@ -12,6 +12,30 @@ $(document).ready(function() {
  	$("#bRight").hide();
  	$("#bDetails").hide();
 
+	$("#radius").val(localStorage.RADIUS_SETUP*10);
+	$("#amountId").html(localStorage.RADIUS_SETUP);
+	
+		$("input").focusin(function() {
+		$("body").css({fontSize:"200%"});
+		$(".center").css({
+			"top": "0%",
+			"height": "100%"
+		});
+		$(".topBar").hide();
+		$(".footer").hide();
+
+	});
+	
+	$("input").focusout(function() {
+		$("body").css({fontSize:"200%"});
+		$(".center").css({
+			"top": "5%",
+			"height": "90%"
+		});
+		$(".topBar").show();
+		$(".footer").show();
+	});
+
 
 });
 

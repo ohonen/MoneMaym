@@ -23,6 +23,7 @@ input
 	direction: rtl;
 	height: 90%;
 	top: 5%;
+	overflow: auto;
 }
 
 input[type='range'] {

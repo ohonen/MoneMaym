@@ -1,11 +1,12 @@
 <!DOCTYPE html>
-<html>
+<html manifest="Masofon.manifest">
 	<head>
 		<title>Login</title>
 		<link rel="stylesheet" type="text/css" href="project.css">
 		<link rel="stylesheet" type="text/css" href="login.css">
 		<meta charset="utf-8"/>
 		<meta name='viewport' content='user-scalable=0'>
+		<!-- <meta name="mobile-web-app-capable" content="yes">  -->
 		<script src="jquery-2.1.0.min.js"></script>
 		<script type="text/javascript" src="project.js"></script>
 		<script type="text/javascript" src="sqlite.js"></script>
@@ -15,21 +16,24 @@
 
 	<body>
 
+
 		<!-- <div class="Head"></div> -->
 		<div id="Content" class="header large" >
 			<form onsubmit="checkUser()">
 				<div class="inputDiv"><p class="cInputText">שם:    </p><input class="cInputField" type="text" id="uname" name="username"><br></div>
 				<div class="inputDiv"><p class="cInputText">סיסמא: </p><input class="cInputField" type="password" id="pwd" name="password"><br><br></div>
-				<input id="loginButton" type="button" value="כניסה" onclick="checkUser(this.form)" style="font-size:200%;">
+				<button id="loginButton" class="cButton" onclick="checkUser(this.form)">כניסה</button>
 			</form>
 			
 		</div>
 		<div id="Logo" class="center">
 			<!--<div id="LogoImageDiv"> -->
-				<img  id="LogoImage" src="EmekHayarden3.png" alt="Logo" />			
+				<img  id="LogoImage" src="NewAgudaLogo.svg" alt="Logo" />			
 			<!-- </div> -->
 		</div>
-		
+		<div class="cWaitMsg"> מעדכן את בסיס הנתונים ...
+			<div class="cMsgProgress">*</div> 
+		</div>
 	</body>
 	
 </html>

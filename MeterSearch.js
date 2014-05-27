@@ -147,14 +147,9 @@ function dataFilter(str)
 
 function buildMetersTable(filter)
 {
-	// Store header as in original HTML
-   	var tableHeader = $("#tableHeader").html();
-   
-   // Create new table
-   // Leave table with header only
-   $("#metersTable").empty();
-   $("#metersTable").html(tableHeader);
-   db_catMeters2(readFilter,distanceFilter, filter,rowsBuilderTask);
+	//$("#metersTable").find("tr:gt(0)").remove(); // remove all but first (header) row
+	$("#metersTable").empty();
+	db_catMeters2(readFilter,distanceFilter, filter,rowsBuilderTask);
 
 }
 

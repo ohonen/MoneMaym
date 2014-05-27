@@ -1,8 +1,11 @@
 $(document).ready(function() {
+	$(".cWaitMsg").hide();
+
 	checkDbDate();
 	
 	$(".cInputField").focusin(function() {
-		$("body").css({fontSize:"200%"});
+		$("body").css({fontSize:"150%"});
+		$(".header").css({height:"100%"});
 		$("#Logo").hide();		
 	});
 
@@ -10,6 +13,16 @@ $(document).ready(function() {
 //		$("body").css({fontSize:"100%"});
 		$("#Logo").show();		
 	});
+
+    var obj = document.createElement("audio");
+    obj.setAttribute("src", "Click.wav");
+   
+    $.get(); // download audio file right away.
+ 
+        // Should work with tap events too. 
+    $(".cButton").click(function() {
+        obj.play();
+    });           
 
 });
 
@@ -43,12 +56,12 @@ function TEST_initDB()
 
 function initDB()
 {
-	$("#loginButton").attr('disabled','disabled');
+	preInit();
 	db_deleteDB(function(){
 		console.log("DB Deleted.");
 		db_init(function(){
 			console.log("DB Initialized.");
-			buildDB();
+			buildDB(postInit);
 		});
 		
 	});
@@ -59,10 +72,10 @@ function buildDB(callback)
 {
 	db_addUser("MY","אופיר", "123");
 
+	
 	DB_hUPDATE.reset(function(){	// triggered when all vars updated
-		var msg="בסיס הנתונים עודכן בהצלחה";
-		alert(msg);
-		$("#loginButton").removeAttr('disabled');
+		if(callback)
+			callback();
 	});
 
 	// update meters, readings and users
@@ -73,8 +86,6 @@ function buildDB(callback)
 
 	console.log("build DB started.");
 
- 	if(callback)
-		callback();
 }
 
 function checkUser(form)
@@ -91,4 +102,34 @@ function checkUser(form)
 	);
 }
 
+var fadeOutFunc = function(animationObject, speed) {
+	animationObject.fadeOut(speed,function(){fadeInFunc(animationObject, speed);});
+};
 
+var fadeInFunc = function(animationObject, speed) {
+	animationObject.fadeIn(speed,function(){fadeOutFunc(animationObject, speed);});
+};
+
+function preInit()
+{
+	$("#loginButton").attr('disabled','disabled');
+	$(".header").css({"webkitFilter":"blur(4px)"});
+	$(".center").css({"webkitFilter":"blur(4px)"});
+
+	$(".cWaitMsg").show();
+	fadeOutFunc($(".cWaitMsg"),3000);
+
+}
+
+function postInit()
+{
+	var msg="בסיס הנתונים עודכן בהצלחה";
+	console.log(msg);
+	//alert(msg);
+	$("#loginButton").removeAttr('disabled');
+
+	$(".cWaitMsg").stop();
+	$(".cWaitMsg").hide();
+	$(".header").css({"webkitFilter":"blur(0px)"});
+	$(".center").css({"webkitFilter":"blur(0px)"});
+}

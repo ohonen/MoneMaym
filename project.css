@@ -27,13 +27,40 @@ button {
 	border-radius: 10px;
 }
 
+input {
+	border-radius: 20px;
+	border-style: inset;
+	border-width: 5px;	
+}
+
+.cButtonDiv
+{
+	float: left;
+	width:50%;
+	height: 50%;
+	padding:0%;
+	margin: 1% 0%;
+}
+
+.cButton
+{
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+	width: 90%;
+	font-size:larger;
+	border: 5px solid black;
+	border-radius: 20px;
+}
+
+
 .topBar {
 	position: fixed;
 	top: 0%;
 	float: left;
 	height: 5%;
 	width:100%; 
-	font-size: 200%;
+	font-size: 160%;
 	background: orange;
 	margin: 0%;
 }
@@ -64,7 +91,7 @@ button {
 {
 	position:fixed;
 	top: 25%;
-	height:70%;
+	height:65%;
 	width:100%;
 	float: left; 
 	background: linear-gradient(#BBBBFF,#8866FF);
@@ -75,9 +102,16 @@ button {
 {
 	position: fixed;
 	bottom: 0px;
-	height: 5%;
+	height: 10%;
  	width: 100%;
 	background: orange;
+}
+
+.footerButton
+{
+	margin: 5% auto;
+	display: block;
+	font-size:200%;
 }
 
 /* GRID of Footer <narrow><wide><wide><narrow> */
@@ -91,13 +125,6 @@ button {
 	float: left;
 	width:30%;
 	height: 100%;
-}
-
-.footerButton
-{
-	margin: auto;
-	display: block;
-	font-size:150%;
 }
 
 .large {

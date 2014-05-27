@@ -225,33 +225,53 @@ $(document).ready(function() {
 		$("#bRight").attr('disabled','disabled');
 		
 	}
+
 	
-	$("#currentRead").focusin(function() {
+	$("input").focusin(function() {
 		$("body").css({fontSize:"200%"});
 		$(".header").css({
+			"top": "0%",
 			"height":"30%"
 		});
 		$(".center").css({
-			"top": "35%",
-			"height": "65%"
+			"top": "30%",
+			"height": "70%"
 		});
+		$(".topBar").hide();
 		$(".footer").hide();
 
 	});
 	
-	$("#currentRead").focusout(function() {
+	$("input").focusout(function() {
 		$("body").css({fontSize:"200%"});
 		$(".header").css({
+			"top" : "5%",
 			"height":"20%"
 		});
 		$(".center").css({
 			"top": "25%",
 			"height": "70%"
 		});
+		$(".topBar").show();
 		$(".footer").show();
 	});
 
-
+/*
+	$(".switchInput").focusin(function() {
+		$("body").css({fontSize:"200%"});
+		$(".footer").hide();
+		$(".topBar").hide();
+		
+		
+	
+	});
+	$(".switchInput").focusout(function() {
+		$("body").css({fontSize:"200%"});
+		$(".footer").show();
+		$(".topBar").show();
+	
+	});
+*/
 });
 
 

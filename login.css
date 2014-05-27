@@ -1,6 +1,8 @@
 .header {
 	top: 0%;
-	height: 50%;
+	height: 60%;
+	font-size: 150%;
+	padding: 1%;
 }
 
 .cInputText {
@@ -11,16 +13,52 @@
 .cInputField {
 	width: 50%;
 	font-size: 200%;
+	padding: 0px 5px;
 }
 
+
+.cWaitMsg {
+	position: relative;
+	top: 20%;
+	margin: auto;
+	width: 50%;
+	height: auto;
+	background-image: url("NewAgudaLogo.svg");
+	background-size: 100%;
+	
+	font-size: 200%;
+	text-align: center;
+}
+
+.cMsgProgress {
+	font-size: 200%;
+}
+
+/*
+@-webkit-keyframes myfirst
+{
+0% {-webkit-transform: rotateY(0deg); background: red;}
+25% {-webkit-transform: rotateY(90deg); background: blue;}
+50% {-webkit-transform: rotateY(180deg); background: green;}
+75% {-webkit-transform: rotateY(270deg); background: orange;}
+100% {-webkit-transform: rotateY(360deg); background: yellow;}
+}
+*/
+
 .center {
-	height: 50%;
+	height: 40%;
 	top: auto;
 	bottom: 0%;	
 	overflow-y: auto;
 	margin: auto;
+	background: white;
+	padding: 1%;
 }
 
+#loginButton {
+	font-size: 200%;
+	width: 70%;	
+}
 
 #LogoImage {
 	display: block;

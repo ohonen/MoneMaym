@@ -3,7 +3,7 @@ var DB_VERSION='1.0';
 var G_USERS = new Object();
 var G_METER;
 var DB_DATE = "DBTime";
-var DB_AGE_LIMIT = 1;
+var DB_AGE_LIMIT = 0;
 var DB_hUPDATE = new db_updateHandler();
 
 function db_queryFunc(myFunc)
@@ -31,6 +31,7 @@ function db_init(callback)
 	db.transaction(function (tx) {
 	tx.executeSql('CREATE TABLE IF NOT EXISTS GENERAL(key TEXT unique, value TEXT)');
 	var sqlCmd = 'CREATE TABLE IF NOT EXISTS METERS(' +
+		'ix INTEGER UNIQUE, ' +
 		'unit_number INTEGER UNIQUE, ' +
 		'qc INTEGER UNIQUE, ' +
 		'unit_name TEXT, ' +
@@ -82,7 +83,7 @@ function db_initOK()
 	db_OK();
 }
 
-
+// index (first column) is missing
 function db_addMeterBase(id, qc, name, description, customer, iron, diameter, digits, factor, change_limit, gps_lat, gps_long, gps_alt)
 {
 	db_addMeter(id, qc, name, description, customer, iron, diameter, digits, factor, change_limit, gps_lat, gps_long, gps_alt, 5000,
@@ -93,6 +94,7 @@ function db_addMeterBase(id, qc, name, description, customer, iron, diameter, di
 		"time_4", 4, 4); 
 }
 
+// index (first column) is missing
 function db_addMeter(id, qc, name, description, customer, iron, diameter, digits, factor, change_limit, gps_lat, gps_long, gps_alt, distance, time_0, reading_0, type_0, time_1, reading_1, type_1, time_2, reading_2, type_2, time_3, reading_3, type_3, time_4, reading_4, type_4) 
 {
 	var db = openDatabase('monedb', '1.0', 'Water Meter DB', 2 * 1024 * 1024);
@@ -102,6 +104,55 @@ function db_addMeter(id, qc, name, description, customer, iron, diameter, digits
 	},db_ERR2, db_OK);		
 }
 
+function db_addAllMeters(allMeters_JSON, OK_callback, ERR_callback)
+{
+	var allMetersSerialized=[];
+	$(allMeters_JSON).each(function(i, meter)
+	{
+//   		var name = $(this).find('Name').text();
+//   		var meter = $(this)[0];
+		//if(i<1000)
+		{
+   		var meterSerialized = '';
+   		meterSerialized += i + ',';
+   		meterSerialized += meter.ParentUnitId + ',';
+   		meterSerialized += meter.IOId + ',';
+   		meterSerialized += '"' + meter.ParentUnitName.replace(/[\'\"]/g,'') + '",';
+   		meterSerialized += '"' + meter.Description.replace(/[\'\"]/g,'') + '",';
+   		meterSerialized += '"' + (meter.CustomerName || 'אגודה').replace(/[\'\"]/g,'') + '",';
+   		meterSerialized += meter.IronId + ',';
+   		meterSerialized += meter.Diameter + ',';
+   		meterSerialized += meter.Digits + ',';
+   		meterSerialized += meter.Factor + ',';
+   		meterSerialized += 10000 + ',';				// default read limit
+   		meterSerialized += meter.GPS_LAT + ',';
+   		meterSerialized += meter.GPS_LONG + ',';
+   		meterSerialized += meter.GPS_ALT + ',';
+   		meterSerialized += 5000 + ',';				// default map distance
+		meterSerialized += '"time_0", 0, 0,';
+		meterSerialized += '"time_1", 1, 1,'; 
+		meterSerialized += '"time_2", 2, 2,'; 
+		meterSerialized += '"time_3", 3, 3,'; 
+		meterSerialized += '"time_4", 4, 4'; 
+		allMetersSerialized[i] = meterSerialized;
+		}
+	}).promise().done(function(){	// When all meters read and schedule for DB insert
+		/*alert("meters read");*/ 
+		var db = openDatabase(DB_NAME, DB_VERSION, 'Water Meter DB', 2 * 1024 * 1024);
+		var sqlCmdBase = 'INSERT INTO METERS VALUES ';
+		db.transaction(function (tx) {
+			for(var i=0; i<allMetersSerialized.length; ++i)
+			{
+				var sqlCmd = sqlCmdBase + '(' + allMetersSerialized[i] + ');';
+				tx.executeSql(sqlCmd);
+			}
+		},ERR_callback || db_ERR2, OK_callback || db_OK);		
+	});
+					
+
+}
+
+
 function db_addMeterReading(index, qc, date, value, type)
 {
 	var sqlCmd = 'UPDATE METERS SET time_' + index + '="'+ date + '", reading_' + index + '=' + value +', type_' + index + '='+ type +' WHERE qc=' + qc + ';';
@@ -110,6 +161,38 @@ function db_addMeterReading(index, qc, date, value, type)
 		tx.executeSql(sqlCmd);
 	},db_ERR, db_OK);			
 }
+
+// DB_hUPDATE.readings();
+function db_addMeterReading2(allMetersUpdate_JSON, OK_callback, ERR_callback)
+{
+	var metersUpdateSqlCmd = [];
+	$(allMetersUpdate_JSON).each(function(index, item)
+	{
+		//var reading = $(this)[0];
+		var dateNum = item.ReadingTime.replace(/\D/g,'');
+		var date = new Date(parseInt(dateNum));
+		var type = 0; // MISSING
+		var modIndex = index%4;
+		metersUpdateSqlCmd[index] = 'UPDATE METERS SET ';
+		metersUpdateSqlCmd[index] += 'time_' + modIndex + '="' + date.toLocaleDateString() + '",';
+		metersUpdateSqlCmd[index] += 'reading_' + modIndex + '=' + item.Value + ',';
+		metersUpdateSqlCmd[index] += 'type_' + modIndex + '=' + type;
+		metersUpdateSqlCmd[index] += ' WHERE qc=' + item.IoId + ';';
+	}).promise().done(function(){
+		var db = openDatabase(DB_NAME, DB_VERSION, 'Water Meter DB', 2 * 1024 * 1024);
+		db.transaction(function (tx) {
+			for(var i=0; i<metersUpdateSqlCmd.length; ++i) {
+				tx.executeSql(metersUpdateSqlCmd[i]);
+			}
+		},ERR_callback || db_ERR, OK_callback || db_OK);			
+		
+	});
+					
+
+}
+
+
+
 
 function db_addUser(id, name, pwd)
 {
@@ -349,14 +432,17 @@ function db_checkAge(ageInDays, tooOldFunction)
 					update = true;
 			}; 
 
-			if(update) {
-				alert("בסיס הנתונים אינו מעודכן.\nמעדכן...");
+			if(update && tooOldFunction) {
+				//alert("בסיס הנתונים אינו מעודכן.\nמעדכן...");
 				tooOldFunction();
 			};
 		});
 	}, function(err){
-		alert("בסיס הנתונים חדש או לא תקין.\nמאתחל...");
-		tooOldFunction();
+		if(tooOldFunction)
+		{
+			//alert("בסיס הנתונים חדש או לא תקין.\nמאתחל...");
+			tooOldFunction();
+		}
 	}, db_OK);
 	
 }

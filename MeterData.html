@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html manifest="Masofon.manifest">
 	<head>
 		<title>Meter Data</title>
 		<link rel="stylesheet" type="text/css" href="project.css">
@@ -100,27 +100,42 @@
 				<button id="bSaveLocation" class="cSaveLocation" type="button" onclick="storeLocation()">שמור מיקום נוכחי</button>			
 			</div>
 			<table id="tableDetails" dir="rtl">
-				<tr><td class="detailedKey">לקוח</td><td id="detailedCustomer" class="detailedValue">בית זרע</td></tr>
-				<tr><td class="detailedKey">מספר ברזל</td><td id="detailedIron" class="detailedValue">6655</td></tr>
-				<tr><td class="detailedKey">קוטר</td><td class="detailedValue"><span>&quot;</span><span id="detailedDiameter">4</span></td></tr>
-				<tr><td class="detailedKey">מספר ספרות</td><td id="detailedDigits" class="detailedValue">6</td></tr>
-				<tr><td class="detailedKey">פקטור</td><td id="detailedFactor" class="detailedValue">0.95</td></tr>
-				<tr><td class="detailedKey">גבול קריאה</td><td id="detailedLimit" class="detailedValue">700</td></tr>
+				<tr><td class="cItemKey detailedKey">לקוח</td><td id="detailedCustomer" class="detailedValue">בית זרע</td></tr>
+				<tr><td class="cItemKey detailedKey">מספר ברזל</td><td id="detailedIron" class="detailedValue">6655</td></tr>
+				<tr><td class="cItemKey detailedKey">קוטר</td><td class="detailedValue"><span>&quot;</span><span id="detailedDiameter">4</span></td></tr>
+				<tr><td class="cItemKey detailedKey">מספר ספרות</td><td id="detailedDigits" class="detailedValue">6</td></tr>
+				<tr><td class="cItemKey detailedKey">פקטור</td><td id="detailedFactor" class="detailedValue">0.95</td></tr>
+				<tr><td class="cItemKey detailedKey">גבול קריאה</td><td id="detailedLimit" class="detailedValue">700</td></tr>
 			</table>
 			<form>
 				<div id="switchOver" class="cSwitchOver">
-					<div class="col newOldTile">
+					<div class="newOldTile">
 						ישן
 					</div>
-					<div class="col switchInputLine">קריאה אחרונה</div><input class="col switchInput" type="number" name="OldRead"/><div class="placeHolder"></div>
-					<div class="col newOldTile">
+					<div class="cSwitchInputDiv">
+						<div class="cItemKey switchInputLine">קריאה אחרונה</div>
+						<input class="switchInput" type="number" name="OldRead"/>
+					</div>
+					<div class="newOldTile">
 						חדש
 					</div>
-					<div class="col switchInputLine">קריאה ראשונה</div><input class="col switchInput" type="number" name="NewRead"/><div class="placeHolder"></div>
-					<div class="col switchInputLine">מספר ברזל</div><input class="col switchInput" type="number" name="NewIron"/><div class="placeHolder"></div>
-					<div class="col switchInputLine">קוטר</div><input class="col switchInput" type="number" name="NewDiameter"/><div class="placeHolder"></div>
-					<div class="col switchInputLine">פקטור</div><input class="col switchInput" type="number" name="NewFactor"/><div class="placeHolder"></div>
-					<button id="bSwitchSubmit" type="submit" class="col switchInputLine">עדכן</button>
+					<div class="cSwitchInputDiv">
+						<div class="cItemKey switchInputLine">קריאה ראשונה</div>
+						<input class="switchInput" type="number" name="NewRead"/>
+					</div>
+					<div class="cSwitchInputDiv">
+						<div class="cItemKey switchInputLine">מספר ברזל</div>
+						<input class="switchInput" type="number" name="NewIron"/>
+					</div>
+					<div class="cSwitchInputDiv">
+						<div class="cItemKey switchInputLine">קוטר</div>
+						<input class="switchInput" type="number" name="NewDiameter"/>
+					</div>
+					<div class="cSwitchInputDiv">
+						<div class="cItemKey switchInputLine">פקטור</div>
+						<input class="switchInput" type="number" name="NewFactor"/>
+					</div>
+					<button id="bSwitchSubmit" type="submit" class="cSwitchUpdate">עדכן</button>
 				</div>
 			</form>
 		</div>

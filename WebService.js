@@ -4,7 +4,7 @@ var SITE_FULLPATH = 'http://' + SITE_IP + '/' + SITE_SERVICE + '/';
 var UPDATE_TIMEOUT = 5 * 60 * 1000;	// IF update fails try again in 5 minutes
 
 // Read all Meters from Center
-function ws_getAllMeters()
+function ws_getAllMeters(callback)
 {
 	    //var MesofonUrl = 'http://5.100.248.223/MesophonTest/service1.asmx/GetSingleInstanceForTestUsingContext';
 		//var MesofonUrl = 'http://5.100.248.223/MasofonService/MasofonService.asmx/GetAllMeters';
@@ -14,9 +14,13 @@ function ws_getAllMeters()
 			type: "GET",
 			dataType: "json",
 			contentType: "text/xml; charset=\"utf-8\"",
-			complete: ws_updateAllMeters,
+			complete: ws_updateAllMeters2,
 			success: function(html) {
-				console.log("ws_getAllMeters sucess");			
+				console.log("ws_getAllMeters sucess");	
+				$(".cMsgProgress").text("**");	// All Meters were read successfully
+				//alert("ws_getAllMeters OK VVV");
+				if(callback)
+					callback();		
 			},
 			error: function(request, status, error) {
 				alert("ws_getAllMeters FAIL");
@@ -45,6 +49,22 @@ function ws_updateAllMeters(xmlHttpRequest, status)
 
 }
 
+function ws_updateAllMeters2(xmlHttpRequest, status)
+{
+	db_addAllMeters(xmlHttpRequest.responseJSON, 
+		function(){
+			$(".cMsgProgress").text("***");		// DB was updated with all meters. Fetching latests readings
+			DB_hUPDATE.meters();
+			ws_getLastReadings();	// read latest readings
+			console.log("ws_updateAllMeters2 OK");
+			//alert("ws_updateAllMeters2 OK");
+		}, 
+		function(){
+			alert("ws_updateAllMeters2 ERROR");
+		}
+	);	
+}
+
 function ws_getLastReadings()
 {
 		var MesofonUrl = 'http://5.100.248.223/MasofonService/MasofonService.asmx/GetLastReadings';
@@ -55,7 +75,9 @@ function ws_getLastReadings()
 		contentType: "text/xml; charset=\"utf-8\"",
 		complete: ws_updateAllMetersReadings,
 		success: function(html) {
+			$(".cMsgProgress").text("****");	// READINGS received. Updating DB.
 			console.log("ws_getLastReadings sucess");			
+			//alert("ws_getLastReadings sucess");			
 		},
 		error: function(request, status, error) {
 			alert("ws_getLastReadings FAIL");
@@ -67,16 +89,29 @@ function ws_getLastReadings()
 
 function ws_updateAllMetersReadings(xmlHttpRequest, status)
 {
- $(xmlHttpRequest.responseJSON).each(function(index)
+	/*
+	$(xmlHttpRequest.responseJSON).each(function(index)
 	{
 		var reading = $(this)[0];
 		var dateNum = reading.ReadingTime.replace(/\D/g,'');
 		var date = new Date(parseInt(dateNum));
 		var type = 0; // MISSING
 		db_addMeterReading(index%4, reading.IoId, date.toLocaleDateString(),reading.Value, type);
-	}).promise().done(function(){/*alert("readings read");*/ DB_hUPDATE.readings();});
-					
+	}).promise().done(function(){/*alert("readings read"); * / DB_hUPDATE.readings();});
+	*/	
+	db_addMeterReading2(xmlHttpRequest.responseJSON, 
+		function(){
+			$(".cMsgProgress").text("*****");	// READINGS updated to DB
+			DB_hUPDATE.readings();
+			var msg = "Meters Reading Update OK.";
+			//alert(msg);
+			console.log(msg);	
+		}, function(){
+			alert("Meters Reading Update ERROR.");				
+		});
+			
 
+ 
 }
 
 function ws_getAllUsers()

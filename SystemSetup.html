@@ -1,7 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"
 "http://www.w3.org/TR/html4/strict.dtd">
 
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" manifest="Masofon.manifest">
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 		<title>System Setup</title>
@@ -37,7 +37,7 @@
 		<div class="center">
 			<form oninput="amount.value=setRadius(radius.value);">	
 				<p>רדיוס חיפוש:
-					<output name="amount" for="radius">0</output>
+					<output id="amountId" name="amount" for="radius">0</output>
 				</p>
 				<p>0.1<input id="radius" class="cRadiusInput" type="range" name="points" min="1" max="100">10.0</p>
 			</form>
