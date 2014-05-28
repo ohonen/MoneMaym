@@ -57,10 +57,13 @@
 
 .cMeterIdData {
 	padding: 1%;
+	width: 20%;
 }
 
 .cCustomerName {
 	background-color:#FFBBBB;
+	padding: 0.5%;
+	width:20%;
 }
 
 .cMeterId {
@@ -68,6 +71,10 @@
 	border: 5px solid black;
 	background: linear-gradient(#BBBBFF, #6666FF);
 	border-radius: 10px;
+}
+
+.cMeterDescription {
+	padding: 0.5%;
 }
 
 #tableData {

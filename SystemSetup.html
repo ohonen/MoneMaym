@@ -14,6 +14,7 @@
 
 		<script src="jquery-2.1.0.min.js"></script>
 		<script type="text/javascript" src="sqlite.js"></script>
+		<script type="text/javascript" src="WebService.js"></script>
 		<script type="text/javascript" src="project.js"></script>
 		<script type="text/javascript" src="SystemSetup.js"></script>
 
@@ -42,8 +43,8 @@
 				<p>0.1<input id="radius" class="cRadiusInput" type="range" name="points" min="1" max="100">10.0</p>
 			</form>
 			
-			<p>E-mail: </p>
-			<input type="email" name="usremail">
+			<p class="cEmailTitle">E-mail: </p>
+			<input class="cEmailInput" type="email" name="usremail">
 		</div>
 
 
@@ -60,6 +61,10 @@
 			<div class="span_footer_narrow">
 				<button id="bRight" class="footerButton">&gt;</button>
 			</div>
+		</div>
+
+		<div class="cWaitMsg"> מעדכן את בסיס הנתונים ...
+			<div class="cMsgProgress">*</div> 
 		</div>
 
 	</body>

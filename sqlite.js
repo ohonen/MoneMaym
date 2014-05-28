@@ -63,7 +63,7 @@ function db_init(callback)
 		'type_4 INTEGER)';
 	tx.executeSql(sqlCmd);
 		
-	tx.executeSql('CREATE TABLE IF NOT EXISTS USERS(id TEXT unique, name TEXT COLLATE NOCASE, pwd TEXT)');
+	tx.executeSql('CREATE TABLE IF NOT EXISTS USERS(id TEXT, name TEXT COLLATE NOCASE, pwd TEXT)');
 	tx.executeSql('CREATE TABLE IF NOT EXISTS READINGS(time TEXT, meter_id INTEGER, meter_read INTEGER, committed INTEGER)');
 	
 	var dt = new Date();		// Now
@@ -101,7 +101,7 @@ function db_addMeter(id, qc, name, description, customer, iron, diameter, digits
 	var sqlCmd = 'INSERT INTO METERS VALUES(' + id + ','+qc+', "' + name + '", "' + description + '","' + customer + '",' + iron +','+diameter+','+digits+','+factor+','+change_limit+','+gps_lat+','+ gps_long+','+ gps_alt+',' + distance + ',"'+ time_0+'",'+ reading_0+','+ type_0+',"'+ time_1+'",'+ reading_1+','+ type_1+',"'+ time_2+'",'+ reading_2+','+ type_2+',"'+ time_3+'",'+ reading_3+','+ type_3+',"'+ time_4+'",'+ reading_4+','+ type_4+')';
 	db.transaction(function (tx) {
 		tx.executeSql(sqlCmd);
-	},db_ERR2, db_OK);		
+	},db_ERR, db_OK);		
 }
 
 function db_addAllMeters(allMeters_JSON, OK_callback, ERR_callback)
@@ -146,7 +146,7 @@ function db_addAllMeters(allMeters_JSON, OK_callback, ERR_callback)
 				var sqlCmd = sqlCmdBase + '(' + allMetersSerialized[i] + ');';
 				tx.executeSql(sqlCmd);
 			}
-		},ERR_callback || db_ERR2, OK_callback || db_OK);		
+		},ERR_callback || db_ERR, OK_callback || db_OK);		
 	});
 					
 
@@ -200,7 +200,7 @@ function db_addUser(id, name, pwd)
 	var sqlCmd = 'INSERT INTO USERS VALUES("' + id + '", "' + name + '", "'+pwd+'")';
 	db.transaction(function (tx) {
 		tx.executeSql(sqlCmd);
-	},db_ERR, db_OK);		
+	},db_ERR2, db_OK);		
 	
 }
 
@@ -259,7 +259,7 @@ function db_addReading(readTime, meter, reading)
 	var sqlCmd = 'INSERT INTO READINGS VALUES("' + readTime + '", ' + meter + ', ' + reading + ', 0)';
 	db.transaction(function (tx) {
 		tx.executeSql(sqlCmd);
-	},db_ERR, db_OK);			
+	},db_ERR2, db_OK);			
 }
 
 function db_catReadings()
@@ -304,7 +304,7 @@ function db_taskUncommitedReadings(task)
 		   		task(thisread.time, thisread.meter_id, thisread.user_id, thisread.meter_read);
 		   }
 		});
-	},db_ERR, db_OK);
+	},db_ERR2, db_OK);
 }
 
 
@@ -369,7 +369,12 @@ function db_catMeters2(readFilter,distanceFilter, filter,task)
 	
 	if(distanceFilter) { sqlCmd += filterWord + 'METERS.distance<' + (localStorage.RADIUS_SETUP * 1000); filterWord = " AND "; }
 		
-	if(filter) { sqlCmd += filterWord+ 'METERS.unit_name LIKE "%' + filter + '%"'; filterWord = " AND "; }
+	if(filter) { 
+		sqlCmd += filterWord+ '(METERS.unit_name LIKE "%' + filter + '%" OR '; 
+		sqlCmd += 'METERS.description LIKE "%' + filter + '%" OR '; 
+		sqlCmd += 'METERS.customer_name LIKE "%' + filter + '%")'; 
+		filterWord = " AND "; 
+	}
 	
 	db.transaction(function (tx) {
 	   tx.executeSql(sqlCmd, [], function (tx, results) {

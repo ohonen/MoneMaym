@@ -21,7 +21,7 @@ function readMeterOK()
 	$("#detailedIron").html(G_METER.iron_number);		
 	$("#detailedDiameter").html(G_METER.diameter);		
 	$("#detailedDigits").html(G_METER.digits);		
-	$("#detailedFactor").html(G_METER.factor.toFixed(3));		
+	$("#detailedFactor").html(G_METER.factor?G_METER.factor.toFixed(3):"לא מוגדר");		
 	$("#detailedLimit").html(G_METER.change_limit);	
 	
 	// *** Table data
@@ -137,7 +137,8 @@ $(document).ready(function() {
 	
     $("#mySubmitData").on("click", "#submitButton", function (e) {
         e.preventDefault();
-    	appendAndSendData();
+        if($("#readAmount").css("background-color")=='rgb(0, 128, 0)' || confirm("הכמות שנצרכה אינה בטווח החוקי. אנא אשר."))
+    		appendAndSendData(); 
     });
 
 	goTable();

@@ -1,6 +1,6 @@
 $(document).ready(function() {
 	$("#User").html(sessionStorage.User);
-
+	$(".cEmailInput").val(localStorage.EMAIL);
 
 	$("#bSetup").click(function() {
 		parent.history.back();
@@ -10,7 +10,12 @@ $(document).ready(function() {
  	$("#bSetup").html("חזור");
  	$("#bLeft").hide();
  	$("#bRight").hide();
- 	$("#bDetails").hide();
+ 	$("#bDetails").html("עדכן בסיס נתונים");
+ 	$("#bDetails").click(function(){
+ 		initDB(preInit, postInit);	
+ 	});
+
+	$(".cWaitMsg").hide();
 
 	$("#radius").val(localStorage.RADIUS_SETUP*10);
 	$("#amountId").html(localStorage.RADIUS_SETUP);
@@ -35,6 +40,10 @@ $(document).ready(function() {
 		$(".topBar").show();
 		$(".footer").show();
 	});
+	
+	$(".cEmailInput").keyup(function(){
+		localStorage.EMAIL = $(".cEmailInput").val();
+	});
 
 
 });
@@ -43,4 +52,34 @@ function setRadius(radius)
 {
 	localStorage.RADIUS_SETUP = parseFloat(radius)/10;
 	return localStorage.RADIUS_SETUP;
+}
+
+var fadeOutFunc = function(animationObject, speed) {
+	animationObject.fadeOut(speed,function(){fadeInFunc(animationObject, speed);});
+};
+
+var fadeInFunc = function(animationObject, speed) {
+	animationObject.fadeIn(speed,function(){fadeOutFunc(animationObject, speed);});
+};
+
+function preInit()
+{
+	$(".header").css({"webkitFilter":"blur(4px)"});
+	$(".center").css({"webkitFilter":"blur(4px)"});
+
+	$(".cWaitMsg").show();
+	fadeOutFunc($(".cWaitMsg"),3000);
+
+}
+
+function postInit()
+{
+	var msg="בסיס הנתונים עודכן בהצלחה";
+	console.log(msg);
+	//alert(msg);
+
+	$(".cWaitMsg").stop();
+	$(".cWaitMsg").hide();
+	$(".header").css({"webkitFilter":"blur(0px)"});
+	$(".center").css({"webkitFilter":"blur(0px)"});
 }

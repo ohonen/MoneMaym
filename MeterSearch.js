@@ -153,6 +153,7 @@ function buildMetersTable(filter)
 
 }
 
+// Building table
 function rowsBuilderTask(meter)
 {
 	var $tdUnitName = $('<td>', { class: "cMeterIdData"});
@@ -165,7 +166,7 @@ function rowsBuilderTask(meter)
 		$('<tr>', {class:"cMeterRow"}).append(
 			$tdUnitName,
 			$('<td  class="cCustomerName">').text(meter.customer_name),
-			$('<td>').text(meter.description)
+			$('<td>', {class: "cMeterDescription"}).text(meter.description)
 		)		
 	);	
 }
@@ -195,7 +196,7 @@ function updateDistances()
 function updateDistanceCallback(position)
 {
 	updateDbDistanceCallback.currentPosition = position;
-	db_catMeters2(readFilter, distanceFilter, $("#formInput").val(),updateDbDistanceCallback);
+	//db_catMeters2(readFilter, distanceFilter, $("#formInput").val(),updateDbDistanceCallback);
 }
 
 function updateDbDistanceCallback(meter)
