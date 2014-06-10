@@ -49,15 +49,7 @@ function readMeterOK()
 
 
 	// MAP
-	var centerLat = 32.6493626;
-	var centerLong = 35.0796944;
-	var centerStr = 'center=' + G_METER.gps_lat +',' + G_METER.gps_long;
-//	var centerStr = 'center=' + centerLat +',' + centerLong;
-	var zoom = 15;
-	var zoomStr = 'zoom=' + parseInt(getZoomForMetersWide(G_METER.gps_lat));
-	var size = 'size=' + 800 + 'x' + 500; 
-	var src = "http://maps.googleapis.com/maps/api/staticmap?" + centerStr + "&" + zoomStr + "&" + size + "&markers=color:blue|label:11543|32.6853626,35.5726944&sensor=false";
-	$('#mapImage').attr('src', src);
+	updateMap({coords : { latitude: G_METER.gps_lat, longitude: G_METER.gps_long}});
 //	$('#Map').css('background-image', "url(http://maps.googleapis.com/maps/api/staticmap?' + centerStr + '&' + zoomStr + '&size=500x300&markers=color:blue|label:11543|32.6853626,35.5726944&sensor=false)");
 
 }
@@ -113,6 +105,7 @@ function amountSet(elem, type, curRead, prevRead, limit)
 
 $(document).ready(function() {
 	// upload all uncomitted
+	$("#iWaitMsg").hide();
 	ws_uploadUncommitedReadings();
 		
 	db_readMeter(readMeterOK);
@@ -174,6 +167,7 @@ $(document).ready(function() {
 		$(".cReadForm").show();
 		
 		$("#tableData").hide();
+
 		document.getElementById("Map").style.display = 'inline';
 //		$("#Map").show();
 //		$("iframe").show();
@@ -286,6 +280,7 @@ function appendAndSendData(now)
 	
 	ws_insertReading(sessionStorage.meterId, now.toISOString(), $("#currentRead").val(), "NONE");
 
+	db_onMeterTask(sessionStorage.meterId, unitAutoLocationUpdate);
 }
 	
 function db_checkRead()
@@ -306,15 +301,28 @@ function db_checkRead()
 	},db_ERR, db_OK);
 }
 
+function unitAutoLocationUpdate(unit)
+{
+	if(unit.gps_lat==0)
+	{
+		storeLocation();
+	}
+}
+
 storeLocation.meterGeoData;
 function storeLocation()
 {
 	//getLocationCallback = new storeLocationCallback();
+	$("#iWaitMsg").show();
+	setTimeout(function(){$("#iWaitMsg").hide();}, 2000);
+
 	getLocation(storeLocationCallback);
 }
 
 function storeLocationCallback(position)
 {
+	
+	updateMap(position);
 	//var locationComplete = new storeLocationUploadComplete();
 	var gpsLat = position.coords.latitude || 0;
 	var gpsLong = position.coords.longitude || 0;
@@ -344,4 +352,46 @@ function showPosition(position)
 {
 	x.innerHTML = "Latitude: " + position.coords.latitude + 
 	"<br>Longitude: " + position.coords.longitude; 
+}
+
+function updateMap(position)
+{
+		// MAP
+	var centerLat = position.coords.latitude;
+	var centerLong = position.coords.longitude;
+//	var centerStr = 'center=' + G_METER.gps_lat +',' + G_METER.gps_long;
+	var centerStr = 'center=' + centerLat +',' + centerLong;
+//	var zoom = 15;
+	var zoomStr = 'zoom=17'; // no need for calculation. Similar locations+ parseInt(getZoomForMetersWide(G_METER.gps_lat));	
+	var size = 'size=' + 800 + 'x' + 500; 
+	var language = 'language=iw'; //'hl=iw';	//Hebrew
+	var markers = 'markers=color:blue|label:' + G_METER.unit_name + '|' + position.coords.latitude + ',' + position.coords.longitude;
+	var src = "http://maps.googleapis.com/maps/api/staticmap?" + centerStr + "&" + zoomStr + "&" + size + "&" + markers + "&sensor=false" + "&" + language;
+	$('#mapImage').attr('src', src);
+//	$('#Map').css('background-image', "url(http://maps.googleapis.com/maps/api/staticmap?' + centerStr + '&' + zoomStr + '&size=500x300&markers=color:blue|label:11543|32.6853626,35.5726944&sensor=false)");
+
+
+}
+
+function loadNextMeter()
+{
+	reloadNewMeter(parseInt(sessionStorage.meterIndex)+1);
+}
+
+function loadPrevMeter()
+{
+	reloadNewMeter(parseInt(sessionStorage.meterIndex)-1);	
+}
+
+function reloadNewMeter(meterIndex)
+{
+	if(meterIndex<0)
+		return;
+	var meterIdArr = JSON.parse(sessionStorage.metersIdArr);
+	if(meterIndex>=meterIdArr.length)
+		return;
+		
+	sessionStorage.meterIndex = meterIndex;
+	sessionStorage.meterId = meterIdArr[meterIndex];
+	location.reload();
 }

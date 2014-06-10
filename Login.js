@@ -14,6 +14,7 @@ $(document).ready(function() {
 		$("#Logo").show();		
 	});
 
+	/*
     var obj = document.createElement("audio");
     obj.setAttribute("src", "Click.wav");
    
@@ -23,7 +24,7 @@ $(document).ready(function() {
     $(".cButton").click(function() {
         obj.play();
     });           
-
+	*/
 });
 
 function checkDbDate()

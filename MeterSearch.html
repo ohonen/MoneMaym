@@ -38,7 +38,7 @@
 			<div dir="rtl">
 				<form class="cForm">
 <!--					סינון: <input class="cFormInput" type="number" name="filter" onkeyup="dataFilter(this.value)"/> -->
-					סינון: <input class="cFormInput" id="formInput" type="text" name="filter" onkeydown="inputChanged(this.value)"/>
+					סינון: <input class="cFormInput" id="formInput" type="text" name="filter" onkeyup="inputChanged(this.value)" onchange="inputChanged(this.value)"/>
 				</form>
 			</div>
 		</div>
@@ -68,6 +68,11 @@
 				<button class="footerButton" id="footerRight">&gt;</button>
 			</div>
 		</div>
+
+		<div class="cWaitMsg"> מעדכן מרחקים ...
+			<div class="cMsgProgress"> </div> 
+		</div>
+		
 
 	</body>
 </html>

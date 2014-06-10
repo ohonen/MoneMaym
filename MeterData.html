@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html manifest="Masofon.manifest">
+<html>
 	<head>
 		<title>Meter Data</title>
 		<link rel="stylesheet" type="text/css" href="project.css">
@@ -98,6 +98,7 @@
 				
 <!--				<iframe src="https://www.google.com/maps/embed?pb=!1m10!1m8!1m3!1d13431.798627318476!2d35.56672742978118!3d32.68738423494909!3m2!1i1024!2i768!4f13.1!5e0!3m2!1siw!2sil!4v1398751939080" width="400" height="300" frameborder="0" style="border:0"></iframe> -->
 				<button id="bSaveLocation" class="cSaveLocation" type="button" onclick="storeLocation()">שמור מיקום נוכחי</button>			
+
 			</div>
 			<table id="tableDetails" dir="rtl">
 				<tr><td class="cItemKey detailedKey">לקוח</td><td id="detailedCustomer" class="detailedValue">בית זרע</td></tr>
@@ -143,7 +144,7 @@
 
 		<div class="footer">
 			<div class="span_footer_wide">
-				<button id="bLeft" class="footerButton">הבא</button>
+				<button id="bLeft" class="footerButton" onclick="loadNextMeter();">הבא</button>
 			</div>
 			<div class="span_footer_wide">
 				<button id="bSetup" class="footerButton">SETUP</button>
@@ -152,10 +153,14 @@
 				<button id="bDetails" class="footerButton">פרטים</button>
 			</div>
 			<div class="span_footer_wide">
-				<button id="bRight" class="footerButton">הקודם</button>
+				<button id="bRight" class="footerButton" onclick="loadPrevMeter();">הקודם</button>
 			</div>
 		</div>
 		
+		<div id="iWaitMsg" class="cWaitMsg"> שומר מיקום נוכחי
+			<div class="cMsgProgress"> </div> 
+		</div>
+
 <!--		<script type="text/javascript">
 			db_catReadings();
 		</script>

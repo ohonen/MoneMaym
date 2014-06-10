@@ -91,6 +91,12 @@
 .footerButton {
 }
 
+.cWaitMsg {
+	top: 40%;
+	background-size: 8em;
+	height: 4em;
+}
+
 @media (orientation: landscape)
 {
 	

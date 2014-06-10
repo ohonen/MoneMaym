@@ -123,8 +123,9 @@ input {
 
 .span_footer_wide {
 	float: left;
-	width:30%;
+	width:23%;
 	height: 100%;
+	margin: auto;
 }
 
 .large {
@@ -156,6 +157,24 @@ input {
 .span_1_of_3 {
 	width: 32.2%;
 }
+
+.cWaitMsg {
+	position: relative;
+	top: 20%;
+	margin: auto;
+	width: 50%;
+	height: auto;
+	background-image: url("NewAgudaLogo.svg");
+	background-size: 100%;
+	
+	font-size: 200%;
+	text-align: center;
+}
+
+.cMsgProgress {
+	font-size: 200%;
+}
+
 
 
 @media (orientation: portrait)

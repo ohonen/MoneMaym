@@ -3,7 +3,7 @@ var DB_VERSION='1.0';
 var G_USERS = new Object();
 var G_METER;
 var DB_DATE = "DBTime";
-var DB_AGE_LIMIT = 0;
+var DB_AGE_LIMIT = 14;
 var DB_hUPDATE = new db_updateHandler();
 
 function db_queryFunc(myFunc)
@@ -22,6 +22,11 @@ function db_deleteDB(callback)
 		tx.executeSql('DROP TABLE IF EXISTS READINGS');
 	},db_ERR, callback);
 }
+
+function dbFunc(val)
+{
+	return 3;
+};
 
 function db_init(callback)
 {
@@ -357,7 +362,7 @@ function db_catMeters(readFilter,filter)
 }
 
 
-function db_catMeters2(readFilter,distanceFilter, filter,task)
+function db_catMeters2(readFilter,distanceFilter, filter,task, postTask)
 {
 	var db = openDatabase('monedb', '1.0', 'Water Meter DB', 2 * 1024 * 1024);
 	var msg;
@@ -376,12 +381,17 @@ function db_catMeters2(readFilter,distanceFilter, filter,task)
 		filterWord = " AND "; 
 	}
 	
+	
+	sqlCmd += " ORDER BY METERS.distance";
+	
 	db.transaction(function (tx) {
 	   tx.executeSql(sqlCmd, [], function (tx, results) {
 		   var len = results.rows.length, i;
 		   for (i = 0; i < len; i++){
 		   		task(results.rows.item(i));
 		   }
+		   
+		   postTask();
 		});
 	},db_ERR, db_OK);
 	
@@ -396,6 +406,31 @@ function db_updateMeterDistance(unit_name, distance)
 	db.transaction(function (tx) {
 		tx.executeSql(sqlCmd);
 	},db_ERR, db_OK);			
+
+}
+
+function db_updateAllMetersDistance(currentPosition, getGpsDistance, OK_callback)
+{
+	var sqlCmdRead = 'SELECT * FROM METERS;';
+	var sqlCmdUpdate = 'UPDATE METERS SET distance=myDbFunc(5);';
+	//var sqlCmd = 'UPDATE METERS SET distance=' + distance + ' WHERE unit_name=' + unit_name + ';';
+	var db = openDatabase(DB_NAME, DB_VERSION, 'Water Meter DB', 2 * 1024 * 1024);
+	db.transaction(function (tx) {
+	   tx.executeSql(sqlCmdRead, [], function (tx, results) {
+			var len = results.rows.length, i;
+			var db = openDatabase(DB_NAME, DB_VERSION, 'Water Meter DB', 2 * 1024 * 1024);
+	   		db.transaction(function(tx){
+				for (i = 0; i < len; i++){
+			   		//task(results.rows.item(i));
+			   		var item = results.rows.item(i);
+			   		var distance = getGpsDistance({lat: currentPosition.coords.latitude, lon: currentPosition.coords.longitude}, {lat:item.gps_lat, lon:item.gps_long});
+			   		// NOT FINISHED !!!!
+			   		var sqlCmd = 'UPDATE METERS SET distance=' + distance + ' WHERE unit_name="' + item.unit_name + '";';
+			   		tx.executeSql(sqlCmd);
+				}  
+	   		});
+		});
+	},db_ERR, OK_callback);
 
 }
 
@@ -486,14 +521,29 @@ function db_checkAgeERR(err)
 
 function db_saveCurrentLocation(locationData)
 {
-	alert(locationData.toString());
+	//alert(locationData.toString());
 	// locationData.id, locationData.LAT, locationData.LONG, locationData.ALT
-	var sqlCmd = 'UPDATE METERS SET gps_lat='+ locationData.LAT + ', gps_long=' + locationData.LONG +', gps_alt='+ locationData.ALT +' WHERE unit_name=' + locationData.id + ';';
+	var sqlCmd = 'UPDATE METERS SET gps_lat='+ locationData.LAT + ', gps_long=' + locationData.LONG +', gps_alt='+ locationData.ALT +' WHERE unit_name="' + locationData.id + '";';
 	var db = openDatabase('monedb', '1.0', 'Water Meter DB', 2 * 1024 * 1024);
 	db.transaction(function (tx) {
 		tx.executeSql(sqlCmd);
 	},db_ERR, db_OK);			
 
+}
+
+function db_onMeterTask(meterId, unitCallback)
+{
+	var db = openDatabase('monedb', '1.0', 'Water Meter DB', 2 * 1024 * 1024);
+	db.transaction(function (tx) {
+	   tx.executeSql('SELECT * FROM METERS WHERE unit_number=' + meterId, [], function (tx, results) {
+		   //var len = results.rows.length, i;
+			if(results.rows.length>0)
+			{
+				unitCallback(results.rows.item(0));
+ 			}
+	
+		});
+	},db_ERR, db_OK);
 }
 
 

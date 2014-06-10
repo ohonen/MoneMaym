@@ -174,7 +174,7 @@ function ws_insertReading(ioId, time, value, comment)
 		
 		// if ioID==url then use it as url and don't add data argument
 		// this flavor is called by ws_completeInsertReading on a retry
-		if(ioId.match(/\d+\.\d+\.\d+\.\d+/))
+		if(ioId.toString().match(/\d+\.\d+\.\d+\.\d+/))
 			myAjaxObj.url = ioId;	// ioId includes full url rather than ioI
 		else
 		{
@@ -186,7 +186,7 @@ function ws_insertReading(ioId, time, value, comment)
 		$.ajax(myAjaxObj);
 }
 
-function ws_completeInsertReading(request)
+function ws_completeInsertReading(request, status)
 {
 	if(request.responseText == "true")
 	{
@@ -196,8 +196,11 @@ function ws_completeInsertReading(request)
 	}
 	else
 	{
-		setTimeout(ws_insertReading(this.url), UPDATE_TIMEOUT);
-		console.log("InsertReading is unsuccessful. Will automaticall retry in 5 minutes.");	
+		if(status!="error")
+		{
+			setTimeout(function(){ws_insertReading(this.url);}, UPDATE_TIMEOUT);
+			console.log("InsertReading is unsuccessful. Will automaticall retry in 5 minutes.");
+		}	
 	}
 	
 }

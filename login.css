@@ -17,23 +17,6 @@
 }
 
 
-.cWaitMsg {
-	position: relative;
-	top: 20%;
-	margin: auto;
-	width: 50%;
-	height: auto;
-	background-image: url("NewAgudaLogo.svg");
-	background-size: 100%;
-	
-	font-size: 200%;
-	text-align: center;
-}
-
-.cMsgProgress {
-	font-size: 200%;
-}
-
 /*
 @-webkit-keyframes myfirst
 {

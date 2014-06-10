@@ -10,11 +10,7 @@ $(document).ready(function() {
  	$("#bSetup").html("חזור");
  	$("#bLeft").hide();
  	$("#bRight").hide();
- 	$("#bDetails").html("עדכן בסיס נתונים");
- 	$("#bDetails").click(function(){
- 		initDB(preInit, postInit);	
- 	});
-
+ 	$("#bDetails").hide();
 	$(".cWaitMsg").hide();
 
 	$("#radius").val(localStorage.RADIUS_SETUP*10);
@@ -66,9 +62,10 @@ function preInit()
 {
 	$(".header").css({"webkitFilter":"blur(4px)"});
 	$(".center").css({"webkitFilter":"blur(4px)"});
+	$(".footer").css({"webkitFilter":"blur(4px)"});
 
 	$(".cWaitMsg").show();
-	fadeOutFunc($(".cWaitMsg"),3000);
+	fadeOutFunc($(".cWaitMsg"),2000);
 
 }
 
@@ -82,4 +79,5 @@ function postInit()
 	$(".cWaitMsg").hide();
 	$(".header").css({"webkitFilter":"blur(0px)"});
 	$(".center").css({"webkitFilter":"blur(0px)"});
+	$(".footer").css({"webkitFilter":"blur(0px)"});
 }

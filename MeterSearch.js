@@ -1,8 +1,10 @@
 var readFilter = false;
 var distanceFilter = false;
+var metersIdArr = [];
 
-function Mone(number)
+function Mone(index, number)
 {
+	sessionStorage.meterIndex = index;
 	sessionStorage.meterId = number;
 }
 
@@ -83,9 +85,26 @@ function filterDistance()
 	inputChanged($("#formInput").val());		
 }
 
+
 function inputChanged(newValue)
 {
 	buildMetersTable(newValue);	
+}
+
+function verifyKey(e)
+{
+    var keycode;
+    if (window.event)
+        keycode = window.event.keyCode;
+    else if (e)
+        keycode = e.which;
+
+
+    if(keycode<31 || keycode>127)	// non-ascii character
+    {
+		setTimeout(function(){buildMetersTable($("#formInput").val());}, 0);
+	}
+    
 }
 
 function showResult(str)
@@ -147,17 +166,21 @@ function dataFilter(str)
 
 function buildMetersTable(filter)
 {
-	//$("#metersTable").find("tr:gt(0)").remove(); // remove all but first (header) row
-	$("#metersTable").empty();
-	db_catMeters2(readFilter,distanceFilter, filter,rowsBuilderTask);
+	// Clear old table and Meters Id Array
+	$("#metersTable").empty();	
+	metersIdArr = [];
+	
+	db_catMeters2(readFilter,distanceFilter, filter,rowsBuilderTask, metersTablePostBuild);
 
 }
 
 // Building table
 function rowsBuilderTask(meter)
 {
+	metersIdArr.push(meter.unit_number);
+	
 	var $tdUnitName = $('<td>', { class: "cMeterIdData"});
-	var $form = $('<form action="MeterData.html" onSubmit=Mone("' + meter.unit_number + '")/>');
+	var $form = $('<form action="MeterData.html" onSubmit=Mone(' + (metersIdArr.length-1) + ',"' + meter.unit_number + '")/>');
 	var $input = $('<input>', { class:"cMeterId",  type:"submit", value: meter.unit_name });
 	$input.appendTo($form);
 	$form.appendTo($tdUnitName);
@@ -171,14 +194,24 @@ function rowsBuilderTask(meter)
 	);	
 }
 
+function metersTablePostBuild()
+{
+	sessionStorage.metersIdArr = JSON.stringify(metersIdArr);
+}
+
+function deg2Rad(deg)
+{
+	return 	deg * (Math.PI / 180);
+}
+
 Number.prototype.toRad = function() { return this * (Math.PI / 180); };
 function getGpsDistance(point1, point2)
 {
 	var R = 6378140; // km  
-	var dLat = (point2.lat-point1.lat).toRad();
-	var dLon = (point2.lon-point1.lon).toRad();
-	var lat1 = point1.lat.toRad();
-	var lat2 = point2.lat.toRad();
+	var dLat = deg2Rad(point2.lat-point1.lat);	// (point2.lat-point1.lat).toRad();
+	var dLon = deg2Rad(point2.lon-point1.lon); // (point2.lon-point1.lon).toRad();
+	var lat1 = deg2Rad(point1.lat);	// point1.lat.toRad();
+	var lat2 = deg2Rad(point2.lat);	// point2.lat.toRad();
 	
 	var a = Math.sin(dLat/2) * Math.sin(dLat/2) +
 	        Math.sin(dLon/2) * Math.sin(dLon/2) * Math.cos(lat1) * Math.cos(lat2); 
@@ -190,6 +223,7 @@ function getGpsDistance(point1, point2)
 
 function updateDistances()
 {
+	$(".cWaitMsg").show();
 	getLocation(updateDistanceCallback);
 }
 
@@ -197,6 +231,7 @@ function updateDistanceCallback(position)
 {
 	updateDbDistanceCallback.currentPosition = position;
 	//db_catMeters2(readFilter, distanceFilter, $("#formInput").val(),updateDbDistanceCallback);
+	db_updateAllMetersDistance(position, getGpsDistance, clearUpdateMessage);
 }
 
 function updateDbDistanceCallback(meter)
@@ -211,5 +246,10 @@ function updateDbDistanceCallback(meter)
 	else
 		distance = 5000;	// some average so unupdated meters will not be too far or too close. anyway it should be temporary
 	
-	db_updateMeterDistance(meter.unit_name, distance);
+	//db_updateMeterDistance(meter.unit_name, distance);
+}
+
+function clearUpdateMessage()
+{
+	$(".cWaitMsg").hide();
 }
