@@ -37,7 +37,7 @@ function ws_updateAllMeters(xmlHttpRequest, status)
 //   		var name = $(this).find('Name').text();
    		var meter = $(this)[0];
 		db_addMeterBase(meter.ParentUnitId, meter.IOId, meter.ParentUnitName, meter.Description, meter.CustomerName, 
-				meter.IronId, meter.Diameter, meter.Digits, meter.Factor, 10000,
+				meter.IronId, meter.Diameter, meter.Digits, meter.Factor, 9999999999,
 				meter.GPS_LAT, meter.GPS_LONG, meter.GPS_ALT);
 
 	}).promise().done(function(){	// When all meters read and schedule for DB insert
@@ -219,14 +219,14 @@ function ws_uploadUncommitedReadings()
 function ws_uploadCurrentLocation(meter, callback)	// meter contains location data  
 {
 //DEBUG	var MesofonUrl = SITE_FULLPATH + '/InsertGPS';
-	var MesofonUrl = 'http://5.100.248.223/MasofonService/MasofonService.asmx/GetAllUsers';
+	var MesofonUrl = 'http://5.100.248.223/MasofonService/MasofonService.asmx/UpdateLocation';
 	$.ajax({
 		url: MesofonUrl,
 		type: "GET",
 		dataType: "json",
 		contentType: "text/xml; charset=\"utf-8\"",
 		complete: callback,
-		data: {'ioId' : meter.id, 'LAT':meter.LAT, 'LONG':meter.LONG, 'ALT':meter.ALT},
+		data: {'ioId' : meter.id, 'latitude':meter.LAT, 'longitude':meter.LONG, 'altitude':meter.ALT},
 		success: function(html) {
 			console.log("ws_saveCurrentLocation sucess");			
 		},

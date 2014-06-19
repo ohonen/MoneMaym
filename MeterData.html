@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html manifest="Masofon.manifest">
 	<head>
 		<title>Meter Data</title>
 		<link rel="stylesheet" type="text/css" href="project.css">
@@ -38,18 +38,20 @@
 				</button>
 			</div>
 			<div class="headData">
-				<div class="head_data_element" id="headName">בית זרע - חמניות</div>
-				<div class="head_data_element" id="headId">123456789</div>
-				<div class="head_data_element" id="headDetails">בצד שמאל של המוסך ליד העץ שזיפים הכחולים</div>
+				<div class="head_data_element" id="headName">-</div>
+				<div class="head_data_element" id="headId">-</div>
+				<div class="head_data_element" id="headDetails">-</div>
 			</div>
 		</div>
 
 		<div class="center">
 			<form class="cReadForm">
 				<div class="cReadData">
-					<div class="cReadMonth" id="readMonth">March</div>
-					<input class="cReadInput" type="number" id="currentRead" name="currentRead" onchange="currentReadAdjust(this.value)" onkeyup="currentReadAdjust(this.value)"/>
-					<span class="cReadAmount" id="readAmount">0</span>
+					<div class="cReadMonth" id="readMonth">-</div>
+					<div class="cReadInputDiv">
+						<input class="cReadInput" type="number" id="currentRead" name="currentRead" onchange="currentReadAdjust(this.value)" onkeyup="currentReadAdjust(this.value)"/>
+					</div>
+					<div class="cReadAmount" id="readAmount">0</div>
 				</div>
 				<div class="cSubmitData" id="mySubmitData">
 <!--					<button class="cSubmitButton" id="submitButton" onclick="appendAndSendData()">שלח</button>  -->
@@ -60,35 +62,35 @@
 				<table>
 					<thead>
 						<tr>
-							<th>תאריך</th>
-							<th>חודש</th>
-							<th>קריאה</th>
-							<th>כמות</th>
+							<th class="cRow1">תאריך</th>
+							<th class="cRow2">חודש</th>
+							<th class="cRow3">קריאה</th>
+							<th class="cRow4">כמות</th>
 						</tr>
 					</thead>
 					<tbody>
 						<tr>
-							<td id="Date0">D0</td>
-							<td id="Month0">M0</td>
-							<td id="Reading0">R0</td>
-							<td id="Amount0">A0</td>
+							<td id="Date0">-</td>
+							<td id="Month0">-</td>
+							<td id="Reading0">-</td>
+							<td id="Amount0">-</td>
 						</tr>
 						<tr>
-							<td id="Date1">D1</td>
-							<td id="Month1">M1</td>
-							<td id="Reading1">R1</td>
-							<td id="Amount1">A1</td>
+							<td id="Date1">-</td>
+							<td id="Month1">-</td>
+							<td id="Reading1">-</td>
+							<td id="Amount1">-</td>
 						</tr>
 						<tr>
-							<td id="Date2">D2</td>
-							<td id="Month2">M2</td>
-							<td id="Reading2">R2</td>
-							<td id="Amount2">A2</td>
+							<td id="Date2">-</td>
+							<td id="Month2">-</td>
+							<td id="Reading2">-</td>
+							<td id="Amount2">-</td>
 						</tr>
 					</tbody>
 				</table>
 			</div>
-<!--			<iframe id="Map" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3359.6461537310547!2d35.08712354999999!3d32.6422453!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x151da928dcddc711%3A0x93008f7d57eca615!2sDaliyot!5e0!3m2!1sen!2sil!4v1395653488627" width="100%" height="85%" frameborder="1" style="border:1">      --></iframe>
+<!--			<iframe id="Map" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3359.6461537310547!2d35.08712354999999!3d32.6422453!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x151da928dcddc711%3A0x93008f7d57eca615!2sDaliyot!5e0!3m2!1sen!2sil!4v1395653488627" width="100%" height="85%" frameborder="1" style="border:1">      -->
 <!--			<iframe id="Map" src="https://www.google.co.il/maps/@32.6853626,35.5726944,17z?hl=iw" width="50%" height="85%" frameborder="1" style="border:1">  -->
 <!--				<iframe src="https://www.google.com/maps/embed?pb=!1m10!1m8!1m3!1d3358.02568115253!2d35.572694412193925!3d32.685362631323244!3m2!1i1024!2i768!4f13.1!5e0!3m2!1siw!2s!4v1397387047598" width="80%" height="100%" frameborder="0" style="border:0">  -->
 			<div id="Map" dir="rtl">
@@ -115,26 +117,26 @@
 					</div>
 					<div class="cSwitchInputDiv">
 						<div class="cItemKey switchInputLine">קריאה אחרונה</div>
-						<input class="switchInput" type="number" name="OldRead"/>
+						<input id="iOldRead" class="switchInput" type="number" name="OldRead"/>
 					</div>
 					<div class="newOldTile">
 						חדש
 					</div>
 					<div class="cSwitchInputDiv">
 						<div class="cItemKey switchInputLine">קריאה ראשונה</div>
-						<input class="switchInput" type="number" name="NewRead"/>
+						<input id="iNewRead" class="switchInput" type="number" name="NewRead"/>
 					</div>
 					<div class="cSwitchInputDiv">
 						<div class="cItemKey switchInputLine">מספר ברזל</div>
-						<input class="switchInput" type="number" name="NewIron"/>
+						<input id="iNewIron" class="switchInput" type="number" name="NewIron"/>
 					</div>
 					<div class="cSwitchInputDiv">
 						<div class="cItemKey switchInputLine">קוטר</div>
-						<input class="switchInput" type="number" name="NewDiameter"/>
+						<input id="iNewDiameter" class="switchInput" type="number" name="NewDiameter"/>
 					</div>
 					<div class="cSwitchInputDiv">
 						<div class="cItemKey switchInputLine">פקטור</div>
-						<input class="switchInput" type="number" name="NewFactor"/>
+						<input id="iNewFactor" class="switchInput" type="number" name="NewFactor"/>
 					</div>
 					<button id="bSwitchSubmit" type="submit" class="cSwitchUpdate">עדכן</button>
 				</div>

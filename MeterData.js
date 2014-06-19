@@ -1,148 +1,70 @@
 var monthNames = [ "ינואר", "פברואר", "מרץ", "אפריל", "מאי", "יוני",
     "יולי", "אוגוסט", "ספטמבר", "אוקטובר", "נובמבר", "דצמבר" ];
 var EQUATOR_LENGTH = 6378140;
+var metersIdArr = [];
+var latestOldRead;
 
-function readMeterOK()
+$(document).ready(function() 
 {
-	// *** Head data
-	$("#headName").html(G_METER.unit_name);
-	$("#headDetails").html(G_METER.description);		
-
-	// *** Current reading
-	// Set current month
-	var readDate = new Date();
-	readDate.setDate(readDate.getDate()-10);	// set 10 days back	
-	$("#readMonth").html(monthNames[readDate.getMonth()]);	
-	
-	$("#currentRead").attr('maxlength',G_METER.digits);
-
-	// *** Details Data
-	$("#detailedCustomer").html(G_METER.customer_name);		
-	$("#detailedIron").html(G_METER.iron_number);		
-	$("#detailedDiameter").html(G_METER.diameter);		
-	$("#detailedDigits").html(G_METER.digits);		
-	$("#detailedFactor").html(G_METER.factor?G_METER.factor.toFixed(3):"לא מוגדר");		
-	$("#detailedLimit").html(G_METER.change_limit);	
-	
-	// *** Table data
-	// Rows data and format
-	var myDate0 = new Date(G_METER.time_0);
-	$("#Date0").html(myDate0.toLocaleDateString());
-	myDate0.setDate(myDate0.getDate()-10);	// set 10 days back	
-	$("#Month0").html(monthNames[myDate0.getMonth()]);	
-	$("#Reading0").html(G_METER.reading_0.toFixed(2));
-	amountSet($("#Amount0"), G_METER.type_0, G_METER.reading_0, G_METER.reading_1, G_METER.change_limit);
-
-	var myDate1 = new Date(G_METER.time_1);
-	$("#Date1").html(myDate1.toLocaleDateString());	
-	myDate1.setDate(myDate1.getDate()-10);	// set 10 days back	
-	$("#Month1").html(monthNames[myDate1.getMonth()]);	
-	$("#Reading1").html(G_METER.reading_1.toFixed(2));
-	amountSet($("#Amount1"), G_METER.type_1, G_METER.reading_1, G_METER.reading_2, G_METER.change_limit);
-
-	var myDate2 = new Date(G_METER.time_2);
-	$("#Date2").html(myDate2.toLocaleDateString());	
-	myDate2.setDate(myDate2.getDate()-10);	// set 10 days back	
-	$("#Month2").html(monthNames[myDate2.getMonth()]);	
-	$("#Reading2").html(G_METER.reading_2.toFixed(2));
-	amountSet($("#Amount2"), G_METER.type_2, G_METER.reading_2, G_METER.reading_3, G_METER.change_limit);
-
-
-	// MAP
-	updateMap({coords : { latitude: G_METER.gps_lat, longitude: G_METER.gps_long}});
-//	$('#Map').css('background-image', "url(http://maps.googleapis.com/maps/api/staticmap?' + centerStr + '&' + zoomStr + '&size=500x300&markers=color:blue|label:11543|32.6853626,35.5726944&sensor=false)");
-
-}
-
-
-function getZoomForMetersWide (latitude)
- // final double desiredMeters,
- // final double mapWidth,
- // final double latitude )
-{
-	var mapWidth = 500;
-  var latitudinalAdjustment = Math.cos( Math.PI * latitude / 180.0 );
-
-  var arg = EQUATOR_LENGTH * mapWidth * latitudinalAdjustment / ( localStorage.RADIUS_SETUP * 256.0 * 1000.0);	// * 256.0
-
-  return Math.log( arg ) / Math.log( 2.0 );
-}
-
-function currentReadAdjust(value)
-{
-	// Amount Format
-	var currentAmount = value - G_METER.reading_0;
-	var elem = $("#readAmount");
-	elem.html(currentAmount.toFixed(2));
-	if(currentAmount>0 && currentAmount<=G_METER.change_limit)
-		elem.css("background-color", "green");
-	else
-		elem.css("background-color", "red");			
-}
-
-function amountSet(elem, type, curRead, prevRead, limit)
-{
-	switch(type)
-	{
-		case 0:	// normal read
-		case 2: // last old meter read
-			var amount = curRead - prevRead;
-			elem.html(amount.toFixed(2));
-			if(amount>0 && amount<=limit)
-				elem.css("background-color", "green");
-			else
-				elem.css("background-color", "red");			
-			break;	
-
-		case 1:	// first new meter reading
-			elem.html("---");
-			elem.css("background-color", "blue");
-			break;
-	
-	}	
-	
-}
-
-$(document).ready(function() {
-	// upload all uncomitted
+	// make sure waiting message is hidden
 	$("#iWaitMsg").hide();
+
+	// upload all uncomitted
 	ws_uploadUncommitedReadings();
 		
+	// read meter data from DB and callback readMeterOK
 	db_readMeter(readMeterOK);
-	
+
+	// set user info	
 	$("#User").html(sessionStorage.User);
 	
-	$("#headId").html(sessionStorage.meterId);
-	$("#headName").html(sessionStorage.meterId);
-	$("#headDetails").html(sessionStorage.meterId);
+//	$("#headId").html(sessionStorage.meterId);
+//	$("#headName").html(sessionStorage.meterId);
+//	$("#headDetails").html(sessionStorage.meterId);
 	
-	
+	// convert filtered JSON data to meters IDs array (for next and prev)
+	metersIdArr = JSON.parse(sessionStorage.metersIdArr);
+
+	// old button TBR
 	$("#readws").click(function() {
 		alert("Read WS was pressed");
 		ws_getMeters();
 		ws_getReadings();
 	});
 	
+	// set SETUP functionality. Consider insert into HTML
 	$("#bSetup").click(function() {
 		window.location="SystemSetup.html";
 	});
 
-	
+	// 'submit' click functionality with attachment to external element (original element does not exist somewhere during execution) 
     $("#mySubmitData").on("click", "#submitButton", function (e) {
         e.preventDefault();
         if($("#readAmount").css("background-color")=='rgb(0, 128, 0)' || confirm("הכמות שנצרכה אינה בטווח החוקי. אנא אשר."))
     		appendAndSendData(); 
     });
-
+	
+	// 'switch-submit' event
+	$("#bSwitchSubmit").click(function(){
+		$("#bSwitchSubmit").attr('disabled', 'disabled');	// will be re-enabled on next page reload
+		sendMessage($("#iOldRead").val(), $("#iNewRead").val(), $("#iNewIron").val(), $("#iNewDiameter").val(), $("#iNewFactor").val() );
+	});
+	
+	// show content as list of latest readings
 	goTable();
 //	db_catReadings();
-	db_checkRead();
 
+	// show content as list of latest readings
 	function goTable() {
+		// set correct button image
 		$("#tableImg").hide();
 		$("#gpsImg").show();
 		
-		document.getElementById("Map").style.display = 'none';
+		// show or hide sub sections
+		// hide map (jQuery doesn't work here)
+		var map = document.getElementById("Map");
+		if(map)
+			map.style.display = 'none';
 		//$("#Map").hide();
 		//$("iframe").hide();
 		$("#tableDetails").hide();
@@ -150,6 +72,7 @@ $(document).ready(function() {
 		$("#tableData").show();
 		$(".cReadForm").show();
 
+		// change bottom buttons functionality
 		$("#headButton").click(function() {
 			goGPS();	
 		});
@@ -161,6 +84,7 @@ $(document).ready(function() {
 	
 	}
 	
+	// show content as map
 	function goGPS() {
 		$("#gpsImg").hide();
 		$("#tableImg").show();
@@ -179,6 +103,7 @@ $(document).ready(function() {
 		});
 	}
 
+	// show content as meter's details
 	function goDetails() {
 		$("#tableImg").show();
 		$("#gpsImg").hide();
@@ -203,6 +128,7 @@ $(document).ready(function() {
 
 	}
 	
+	// show content as switching data
 	function goSwitch() {
 		$("#tableImg").show();
 		$("#gpsImg").hide();
@@ -221,7 +147,7 @@ $(document).ready(function() {
 		
 	}
 
-	
+	// increase zoom and remove top & bottom during data input
 	$("input").focusin(function() {
 		$("body").css({fontSize:"200%"});
 		$(".header").css({
@@ -237,6 +163,7 @@ $(document).ready(function() {
 
 	});
 	
+	// reverse zooming in on leaving data input
 	$("input").focusout(function() {
 		$("body").css({fontSize:"200%"});
 		$(".header").css({
@@ -267,38 +194,233 @@ $(document).ready(function() {
 	
 	});
 */
-});
+}); // Document Ready
 
 
+// callback on reading specific meter from METERS in DB. Set to be called in 'document ready'
+function readMeterOK()
+{
+	// *** Head data
+	$("#headId").html(G_METER.qc);
+	$("#headName").html(G_METER.description);
+	$("#headDetails").html(G_METER.customer_name);		
+
+	// *** Current reading
+	// Set current month
+	var readDate = new Date();
+	readDate.setDate(readDate.getDate()-10);	// set 10 days back	
+	$("#readMonth").html(monthNames[readDate.getMonth()]);	
+	
+	$("#currentRead").attr('maxlength',G_METER.digits);
+
+	// *** Details Data
+	$("#detailedCustomer").html(G_METER.customer_name);		
+	$("#detailedIron").html(G_METER.iron_number);		
+	$("#detailedDiameter").html(G_METER.diameter);		
+	$("#detailedDigits").html(G_METER.digits);		
+	$("#detailedFactor").html(G_METER.factor?G_METER.factor.toFixed(3):"לא מוגדר");		
+	$("#detailedLimit").html(G_METER.change_limit);	
+	
+	// read latest readings from OLD_READINGS db table and list them on page
+	db_readOldReadings(G_METER.qc, function(results) {
+		listLastReadings(results);
+		checkReadStatus();
+	});
+	// MAP
+	updateMap({coords : { latitude: G_METER.gps_lat, longitude: G_METER.gps_long}});
+//	$('#Map').css('background-image', "url(http://maps.googleapis.com/maps/api/staticmap?' + centerStr + '&' + zoomStr + '&size=500x300&markers=color:blue|label:11543|32.6853626,35.5726944&sensor=false)");
+
+}
+
+// list latest readings on page and store latest old reading
+function listLastReadings(results)
+{
+	var len = results.rows.length;
+	var refDate = new Date();
+	refDate.setDate(refDate.getDate()-10);
+	for(var i=0;i<len; ++i)
+	{
+		var reading=results.rows.item(i);
+		// store latest (newest) old read for future reference
+		if(i==0)
+		{
+			latestOldRead = jQuery.extend({}, reading);	// 'reading' shallow copy
+		}
+		
+		var myDate = new Date(reading.time);
+		$("#Date" + i).html(myDate.toLocaleDateString());
+		myDate.setDate(myDate.getDate()-10);	// set 10 days back	
+		$("#Month"+i).html(monthNames[myDate.getMonth()]);	
+		$("#Reading"+i).html(reading.meter_read);
+		if(i+1<len)
+			amountSet($("#Amount"+i), reading.type, reading.meter_read, results.rows.item(i+1).meter_read, 9999999999);	
+		else
+			$("#Amount"+i).html('---');
+
+	}
+}
+
+
+function getZoomForMetersWide (latitude)
+ // final double desiredMeters,
+ // final double mapWidth,
+ // final double latitude )
+{
+	var mapWidth = 500;
+  var latitudinalAdjustment = Math.cos( Math.PI * latitude / 180.0 );
+
+  var arg = EQUATOR_LENGTH * mapWidth * latitudinalAdjustment / ( localStorage.RADIUS_SETUP * 256.0 * 1000.0);	// * 256.0
+
+  return Math.log( arg ) / Math.log( 2.0 );
+}
+
+// get current read value and set read amount properly
+function currentReadAdjust(value)
+{
+	var elem = $("#readAmount");
+	if(!latestOldRead || value==0)
+	{
+		elem.html('-');
+		elem.css("background-color", "transparent");
+		return;		
+	}
+	
+	// Amount Format
+	var currentAmount = value - latestOldRead.meter_read;
+	//elem.html(currentAmount.toFixed(2));
+	elem.html(currentAmount);
+	//if(currentAmount>0 && currentAmount<=G_METER.change_limit)	change limit check is disabled
+	if(currentAmount>0)
+		elem.css("background-color", "green");
+	else
+		elem.css("background-color", "red");			
+}
+
+// set amount for old readings
+function amountSet(elem, type, curRead, prevRead, limit)
+{
+	switch(type)
+	{
+		case 0:	// normal read
+		case 2: // last old meter read
+			var amount = curRead - prevRead;
+			//elem.html(amount.toFixed(2));
+			elem.html(amount);
+			// if(amount>0 && amount<=limit) limit check removed
+			if(amount>0)
+				elem.css("background-color", "green");
+			else
+				elem.css("background-color", "red");			
+			break;	
+
+		case 1:	// first new meter reading
+			elem.html("---");
+			elem.css("background-color", "blue");
+			break;
+	
+	}	
+	
+}
+
+
+// send data wrapper. redundent. TBR
+function appendAndSendDataWrapper()
+{
+	appendAndSendData();	
+}
+
+// add to db and send input data
 function appendAndSendData(now)
 {
 	if(now==undefined)
 		now = new Date();
 		
-	db_addReading(now.toISOString(), sessionStorage.meterId, $("#currentRead").val());
-	db_checkRead();
+	// db_addReading(now.toISOString(), sessionStorage.meterId, $("#currentRead").val());
+	db_addReading(now.toISOString(), metersIdArr[sessionStorage.meterIndex], $("#currentRead").val(), function(tx, results) {
+		// following read insertion to DB read it back and make sure it is there
+		checkReadStatus();
+	});
 	
-	ws_insertReading(sessionStorage.meterId, now.toISOString(), $("#currentRead").val(), "NONE");
+	// send data to server
+	ws_insertReading(G_METER.qc, now.toISOString(), $("#currentRead").val(), "NONE");
 
+	// if location does not exist, update it automatically
 	db_onMeterTask(sessionStorage.meterId, unitAutoLocationUpdate);
 }
 	
-function db_checkRead()
+function checkReadStatus()
 {
-	var db = openDatabase('monedb', '1.0', 'Water Meter DB', 2 * 1024 * 1024);
-	db.transaction(function (tx) {
-	   tx.executeSql('SELECT * FROM READINGS WHERE meter_id=' + sessionStorage.meterId, [], function (tx, results) {
-		   //var len = results.rows.length, i;
-			if(results.rows.length>0)
-			{
-   				$("#currentRead").val(results.rows.item(0).meter_read);
-   				currentReadAdjust(results.rows.item(0).meter_read);
-   				$("#submitButton").hide();
-   				$("#currentRead").prop('disabled', true);
- 			}
+	db_taskMeterReadings(sessionStorage.meterId, function(tx, results) {
+		var disabled = checkReadStatusCallback(tx, results);
+		if(!disabled)
+			checkLatestRead();
+	});
+}
+
+function checkReadStatusCallback(tx,results)
+{
+	// calculate current month on 10 days back
+	var now = new Date();
+	now.setDate(now.getDate()-10);
+
+	// run through all readings and see if current month was already read
+	// this loop will return if current month was already read
+	for(var i=0; i<results.rows.length; ++i)
+	{
+		var meterRead = results.rows.item(i);
+		var readDate = new Date(meterRead.time);
+		readDate.setDate(readDate.getDate()-10);
+		if(readDate.getMonth()==now.getMonth() && readDate.getYear()==now.getYear())
+		{
+			disableReading(meterRead);
+			return true;
+		}
+	}
 	
-		});
-	},db_ERR, db_OK);
+	return false;
+	
+}
+
+function checkLatestRead()
+{
+	if(latestOldRead)
+	{
+		var now = new Date();
+		now.setDate(now.getDate()-10);
+
+		var oldReadingDate = new Date(latestOldRead.time);
+		oldReadingDate.setDate(oldReadingDate.getDate()-10);
+
+		if(now.getMonth()==oldReadingDate.getMonth() && now.getYear()==oldReadingDate.getYear())
+		{
+			disableReading();
+			return;
+		}		
+	}
+}
+
+
+
+function disableReading(meter)
+{
+	if(meter)
+	{
+		$("#currentRead").val(meter.meter_read);
+		currentReadAdjust(meter.meter_id?meter.meter_read:0);		
+	} else {
+		$("#currentRead").val('');
+		currentReadAdjust(0);		
+	}
+	$("#submitButton").hide();
+	$("#currentRead").prop('disabled', true);	
+}
+
+function enableReading()
+{
+	$("#currentRead").val('');
+	currentReadAdjust(0);
+	$("#submitButton").show();
+	$("#currentRead").prop('disabled', false);	
 }
 
 function unitAutoLocationUpdate(unit)
@@ -327,7 +449,7 @@ function storeLocationCallback(position)
 	var gpsLat = position.coords.latitude || 0;
 	var gpsLong = position.coords.longitude || 0;
 	var gpsAlt = position.coords.altitude || 0;
-	storeLocation.meterGeoData = {'id': G_METER.unit_name, 'LAT':gpsLat, 'LONG':gpsLong, 'ALT': gpsAlt};
+	storeLocation.meterGeoData = {'id': G_METER.qc, 'LAT':gpsLat, 'LONG':gpsLong, 'ALT': gpsAlt};
 	// Update center
 	ws_uploadCurrentLocation(storeLocation.meterGeoData, storeLocationUploadComplete);
 }
@@ -387,11 +509,12 @@ function reloadNewMeter(meterIndex)
 {
 	if(meterIndex<0)
 		return;
-	var meterIdArr = JSON.parse(sessionStorage.metersIdArr);
-	if(meterIndex>=meterIdArr.length)
+//	metersIdArr = JSON.parse(sessionStorage.metersIdArr);
+	if(meterIndex>=metersIdArr.length)
 		return;
 		
 	sessionStorage.meterIndex = meterIndex;
-	sessionStorage.meterId = meterIdArr[meterIndex];
-	location.reload();
+	sessionStorage.meterId = metersIdArr[meterIndex];
+
+	window.location.href='MeterData.html';
 }

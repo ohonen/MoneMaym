@@ -55,10 +55,11 @@ $(document).ready(function() {
 	});
 
 
+	// update distances and build meters table afterwards
+	updateDistances(function() {
+		buildMetersTable();
+	});
 
-	updateDistances();
-	//db_catMeters(false);
-	buildMetersTable();	
 
 });
 
@@ -177,10 +178,10 @@ function buildMetersTable(filter)
 // Building table
 function rowsBuilderTask(meter)
 {
-	metersIdArr.push(meter.unit_number);
+	metersIdArr.push(meter.qc);
 	
 	var $tdUnitName = $('<td>', { class: "cMeterIdData"});
-	var $form = $('<form action="MeterData.html" onSubmit=Mone(' + (metersIdArr.length-1) + ',"' + meter.unit_number + '")/>');
+	var $form = $('<form action="MeterData.html" onSubmit=Mone(' + (metersIdArr.length-1) + ',"' + meter.qc + '")/>');
 	var $input = $('<input>', { class:"cMeterId",  type:"submit", value: meter.unit_name });
 	$input.appendTo($form);
 	$form.appendTo($tdUnitName);
@@ -188,8 +189,8 @@ function rowsBuilderTask(meter)
 	$("#metersTable").append(
 		$('<tr>', {class:"cMeterRow"}).append(
 			$tdUnitName,
-			$('<td  class="cCustomerName">').text(meter.customer_name),
-			$('<td>', {class: "cMeterDescription"}).text(meter.description)
+			$('<td  class="cCustomerName">').text(meter.description),
+			$('<td>', {class: "cMeterDescription"}).text(meter.customer_name)
 		)		
 	);	
 }
@@ -199,12 +200,16 @@ function metersTablePostBuild()
 	sessionStorage.metersIdArr = JSON.stringify(metersIdArr);
 }
 
+// degrees to radians. Assist with globe distance calculation.
 function deg2Rad(deg)
 {
 	return 	deg * (Math.PI / 180);
 }
 
+// Extension to 'Number' element. Doesn't work properly and was replaced with deg2Rad
 Number.prototype.toRad = function() { return this * (Math.PI / 180); };
+
+// accurate global distance between 2 GPS points. Used to calculate distance from current location to each meter 
 function getGpsDistance(point1, point2)
 {
 	var R = 6378140; // km  
@@ -220,20 +225,27 @@ function getGpsDistance(point1, point2)
 	return d;
 }
 
-
-function updateDistances()
+// get current location and update distances to all meters
+function updateDistances(callback)
 {
 	$(".cWaitMsg").show();
-	getLocation(updateDistanceCallback);
+	getLocation(function(position) {
+		updateDistanceCallback(position, callback);
+	});
 }
 
-function updateDistanceCallback(position)
+// after location is received from GPS, update distances from meters.
+function updateDistanceCallback(position, callback)
 {
 	updateDbDistanceCallback.currentPosition = position;
-	//db_catMeters2(readFilter, distanceFilter, $("#formInput").val(),updateDbDistanceCallback);
-	db_updateAllMetersDistance(position, getGpsDistance, clearUpdateMessage);
+
+	db_updateAllMetersDistance(position, getGpsDistance, function() {
+		clearUpdateMessage();
+		callback();
+	});
 }
 
+// deprecated ?
 function updateDbDistanceCallback(meter)
 {
 	var distance;
