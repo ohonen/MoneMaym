@@ -581,14 +581,14 @@ function db_checkAgeERR(err)
 }
 
 
-function db_saveCurrentLocation(locationData)
+function db_saveCurrentLocation(locationData, OK_cb)
 {
 	//alert(locationData.toString());
 	// locationData.id, locationData.LAT, locationData.LONG, locationData.ALT
-	var sqlCmd = 'UPDATE METERS SET gps_lat='+ locationData.LAT + ', gps_long=' + locationData.LONG +', gps_alt='+ locationData.ALT +' WHERE unit_name="' + locationData.id + '";';
+	var sqlCmd = 'UPDATE METERS SET gps_lat='+ locationData.LAT + ', gps_long=' + locationData.LONG +', gps_alt='+ locationData.ALT +' WHERE qc="' + locationData.id + '";';
 	var db = openDatabase('monedb', '1.0', 'Water Meter DB', 2 * 1024 * 1024);
 	db.transaction(function (tx) {
-		tx.executeSql(sqlCmd);
+		tx.executeSql(sqlCmd, [], OK_cb);
 	},db_ERR, db_OK);			
 
 }

@@ -1,10 +1,13 @@
+
 .topBarHome {
-	height: 80%;
+	width: 50%;
+	height: 90%;
+	
 }
 
+
 .topBarHomeImage {
-	max-height: 80%;
-	width: auto;
+	max-height: 100%;
 	max-width: 100%;
 }
 
@@ -223,7 +226,7 @@
 
 .cMapImage {
 	width: 100%;
-	overflow: scroll;	
+/*	overflow: scroll; */	
 }
 
 .cSaveLocation {
@@ -251,10 +254,10 @@
 
 @media (orientation: landscape)
 {
-/*
-	.center {
-		height: 80%;
-		overflow-y: scroll;
+	
+	.headButtonImg {
+		height:10%; 
 	}
-*/
+	
+
 }

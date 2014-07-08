@@ -115,12 +115,12 @@ $(document).ready(function()
 		$(".cReadForm").hide();
 		
 		$("#tableData").hide();
+		$("#tableDetails").hide();
 
-		document.getElementById("Map").style.display = 'inline';
-//		$("#Map").show();
+//		document.getElementById("Map").style.display = 'inline';
+		$("#Map").show();
 //		$("iframe").show();
 
-		$("#tableDetails").hide();
 			
 		$("#headButton").click(function() {
 			goTable();	
@@ -173,7 +173,7 @@ $(document).ready(function()
 
 	// increase zoom and remove top & bottom during data input
 	$("input").focusin(function() {
-		$("body").css({fontSize:"200%"});
+		//$("body").css({fontSize:"200%"});
 		$(".header").css({
 			"top": "0%",
 			"height":"30%"
@@ -182,24 +182,24 @@ $(document).ready(function()
 			"top": "30%",
 			"height": "70%"
 		});
-		$(".topBar").hide();
-		$(".footer").hide();
+		//$(".topBar").hide();
+		//$(".footer").hide();
 
 	});
 	
 	// reverse zooming in on leaving data input
 	$("input").focusout(function() {
-		$("body").css({fontSize:"200%"});
+		//$("body").css({fontSize:""});
 		$(".header").css({
-			"top" : "5%",
-			"height":"20%"
+			"top" : "",
+			"height":""
 		});
 		$(".center").css({
-			"top": "25%",
-			"height": "70%"
+			"top": "",
+			"height": ""
 		});
-		$(".topBar").show();
-		$(".footer").show();
+		//$(".topBar").show();
+		//$(".footer").show();
 	});
 
 /*
@@ -497,7 +497,10 @@ function storeLocationUploadComplete(xmlHttpRequest, status)
 	if(xmlHttpRequest.responseText == "true" || forceTrue)
 	{
 		// update local db
-		db_saveCurrentLocation(storeLocation.meterGeoData);
+		db_saveCurrentLocation(storeLocation.meterGeoData, function() {
+			db_readMeter(function(){});
+		});
+		//db_readMeter(); // update G_METER
 	 	console.log("storeLocation Complete");				
 	}
 	else

@@ -31,6 +31,7 @@ $(document).ready(function() {
 	//$("#bUnread").click(function(){filterRead();});
 	clearUpdateMessage();
 
+	/*
 	$(".cFormInput").focusin(function() {
 		$("body").css({fontSize:"200%"});
 		$(".header").css({
@@ -42,7 +43,22 @@ $(document).ready(function() {
 		});
 		$(".footer").hide();
 	});
+	*/
 
+	$(".cFormInput").focusin(function() {
+		$("body").css({fontSize:""});
+		$(".header").css({
+			"height":""
+		});
+		$(".center").css({
+			"top": "",
+			"height": "",
+			"fontSize":""
+		});
+		//$(".footer").hide();
+	});
+
+	/*
 	$(".cFormInput").focusout(function() {
 		$("body").css({fontSize:"200%"});
 		$(".header").css({
@@ -54,6 +70,19 @@ $(document).ready(function() {
 		});
 		$(".footer").show();
 	});
+	*/
+	$(".cFormInput").focusout(function() {
+		$("body").css({fontSize:""});
+		$(".header").css({
+			"height":""
+		});
+		$(".center").css({
+			"top": "",
+			"height": ""
+		});
+		$(".footer").show();
+	});
+
 
 	updateDatabase(preInitDbUpdate, postInitDbUpdate);
 

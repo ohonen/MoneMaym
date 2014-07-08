@@ -105,6 +105,15 @@
 
 @media (orientation: landscape)
 {
+	/*
+	.header {
+		padding: 0%;
+	}
+	*/
+	.cButtonDiv {
+		width: 25%;
+		height: 100%;
+	}
 }
 
 
