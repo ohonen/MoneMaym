@@ -12,18 +12,20 @@ function db_queryFunc(myFunc)
 	db.transaction(myFunc(tx) , db_ERR, db_OK );
 }
 
-function db_deleteDB(callback)
+function db_deleteDB(OK_cb)
 {
 	var db = openDatabase('monedb', '1.0', 'Water Meter DB', 2 * 1024 * 1024);
 	db.transaction(function (tx) {
 		tx.executeSql('DROP TABLE IF EXISTS GENERAL');
 		tx.executeSql('DROP TABLE IF EXISTS METERS');
-		tx.executeSql('DROP TABLE IF EXISTS USERS');
+//		tx.executeSql('DROP TABLE IF EXISTS USERS');
 		tx.executeSql('DROP TABLE IF EXISTS OLD_READINGS');
 
-		tx.executeSql('DELETE FROM READINGS WHERE committed=1');
+		// Readings is never drop to prevent situation of dropping actual reads
+		//tx.executeSql('DROP TABLE IF EXISTS READINGS');
+		
 
-	},db_ERR, callback);
+	},db_ERR, OK_cb);
 }
 
 function dbFunc(val)
@@ -71,16 +73,17 @@ function db_init(callback)
 		'type_4 INTEGER)';
 	tx.executeSql(sqlCmd);
 		
-	tx.executeSql('CREATE TABLE IF NOT EXISTS USERS(id TEXT, name TEXT COLLATE NOCASE, pwd TEXT)');
+//	tx.executeSql('CREATE TABLE IF NOT EXISTS USERS(id TEXT, name TEXT COLLATE NOCASE, pwd TEXT)');
 	tx.executeSql('CREATE TABLE IF NOT EXISTS READINGS(time TEXT, meter_id INTEGER, meter_read INTEGER, committed INTEGER)');
 	tx.executeSql('CREATE TABLE IF NOT EXISTS OLD_READINGS(time TEXT, meter_id INTEGER, meter_read INTEGER, type INTEGER)');
+
+	// If READINGS already exists then clean it up
+	tx.executeSql('DELETE FROM READINGS WHERE committed=1');
 	
-	var dt = new Date();		// Now
-	db_addGeneral(DB_DATE, dt.toLocaleDateString());	
+//	var dt = new Date();		// Now
+//	db_addGeneral(DB_DATE, dt.toLocaleDateString());	
 	
 
-//	msg = '<p>Log message created and row inserted.</p>';
-//	document.querySelector('#status').innerHTML =  msg;
 	},db_ERR, callback);
 }
 
@@ -207,7 +210,15 @@ function db_addMeterReading2(allMetersUpdate_JSON, OK_callback, ERR_callback)
 }
 
 
-
+function db_initUsers(OK_cb, ERR_cb)
+{
+	var db = openDatabase(DB_NAME, DB_VERSION, 'Water Meter DB', 2 * 1024 * 1024);
+	db.transaction(function (tx) {
+	
+		tx.executeSql('DROP TABLE IF EXISTS USERS');
+		tx.executeSql('CREATE TABLE IF NOT EXISTS USERS(id TEXT, name TEXT COLLATE NOCASE, pwd TEXT)');
+	}, ERR_cb, OK_cb);
+}
 
 function db_addUser(id, name, pwd)
 {
@@ -230,10 +241,10 @@ function db_checkUser(uname, password, PASS_Callback, FAIL_Callback)
 			else
 				FAIL_Callback();
 		});
-	},db_ERR, db_OK);		
+	},function(err) { db_ERR(err); FAIL_Callback(); }, db_OK);		
 }
 
-function db_readUsers()
+function db_readUsers(DONE_cb, ERR_cb)
 {
 	var db = openDatabase('monedb', '1.0', 'Water Meter DB', 2 * 1024 * 1024);
 	db.transaction(function (tx) {
@@ -246,8 +257,15 @@ function db_readUsers()
 		   		var thisread = results.rows.item(i);
 				G_USERS[thisread.name] = thisread.pwd;
 		   }
+		   
+		   if(DONE_cb)
+		   		DONE_cb();
+		   
 		});
-	},db_ERR, db_OK);
+	},function(err) {
+		db_ERR(err);
+		ERR_cb();
+	}, db_OK);
 }
 
 
@@ -486,7 +504,7 @@ function db_addGeneral(key, val)
 
 }
 
-function db_checkAge(ageInDays, tooOldFunction)
+function db_checkAge(ageInDays, tooOldFunction, notOldFunction)
 {
 	var db = openDatabase('monedb', '1.0', 'Water Meter DB', 2 * 1024 * 1024);
 	var sqlCmd = 'SELECT * FROM GENERAL WHERE ( key = "' + DB_DATE + '");';
@@ -509,10 +527,14 @@ function db_checkAge(ageInDays, tooOldFunction)
 					update = true;
 			}; 
 
-			if(update && tooOldFunction) {
+			if(update) {
 				//alert("בסיס הנתונים אינו מעודכן.\nמעדכן...");
-				tooOldFunction();
-			};
+				if(tooOldFunction)
+					tooOldFunction();
+			} else {
+				if(notOldFunction)
+					notOldFunction();
+			}
 		});
 	}, function(err){
 		if(tooOldFunction)
@@ -618,18 +640,21 @@ function db_OK()
 	console.log("DB: OK");
 }
 
+// usersUpdate disabled(not checked in trigger) after separated from DB init 
 function db_updateHandler()
 {
 	var callback = function(){alert("1234567");};
 	var metersUpdated=false, readingsUpdated=false, usersUpdated=false, callbackDone=false;
+	var isSuccess = true;
 
 //	function trigger(callback, metersUpdated, readingsUpdated, usersUpdated, callbackDone)
 	this.trigger=function()
 	{
-		if(callback && !callbackDone && metersUpdated && readingsUpdated && usersUpdated)
+		//if(callback && !callbackDone && metersUpdated && readingsUpdated && usersUpdated)
+		if(callback && !callbackDone && metersUpdated && readingsUpdated)
 		{
 			callbackDone = true;
-			callback();
+			callback(isSuccess);
 		}
 	};
 	
@@ -642,23 +667,30 @@ function db_updateHandler()
 		usersUpdated=false;
 	};
 	
-	this.meters = function() 
+	this.meters = function(_isSuccess) 
 	{
 		metersUpdated=true; 
+		if(_isSuccess==false)
+			isSuccess &= _isSuccess;
+			
 		//trigger(callback, metersUpdated, readingsUpdated, usersUpdated, callbackDone);
 		this.trigger();
 	};
 
-	this.readings = function() 
+	this.readings = function(_isSuccess) 
 	{
 		readingsUpdated=true; 
+		if(_isSuccess==false)
+			isSuccess &= _isSuccess;
 		//trigger(callback, metersUpdated, readingsUpdated, usersUpdated, callbackDone);
 		this.trigger();
 	};
 	
-	this.users = function() 
+	this.users = function(_isSuccess) 
 	{
 		usersUpdated=true; 
+		if(_isSuccess==false)
+			isSuccess &= _isSuccess;
 		//trigger(callback, metersUpdated, readingsUpdated, usersUpdated, callbackDone);
 		this.trigger();
 	};

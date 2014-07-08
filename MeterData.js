@@ -3,9 +3,12 @@ var monthNames = [ "ינואר", "פבר'", "מרץ", "אפריל", "מאי", "�
 var EQUATOR_LENGTH = 6378140;
 var metersIdArr = [];
 var latestOldRead;
+// for dbl click workaround (you cant combine click & dbl click on the same element)
+var DELAY = 700, clicks = 0, timer = null;
 
 $(document).ready(function() 
 {
+	// 1111111
 	// make sure waiting message is hidden
 	$("#iWaitMsg").hide();
 
@@ -49,6 +52,21 @@ $(document).ready(function()
 	$("#bSwitchSubmit").click(function(){
 		$("#bSwitchSubmit").attr('disabled', 'disabled');	// will be re-enabled on next page reload
 		sendMessage($("#iOldRead").val(), $("#iNewRead").val(), $("#iNewIron").val(), $("#iNewDiameter").val(), $("#iNewFactor").val() );
+	});
+
+	// map click and dblclick(workaround)
+	$("#mapImage").click(function() {
+		clicks++;
+		if(clicks==1) {
+			timer=setTimeout(function(){
+				updateMapZoom(1);
+				clicks=0;
+			}, DELAY);
+		} else {
+			clearTimeout(timer);
+			updateMapZoom(-1);
+			clicks=0;
+		}
 	});
 	
 	// show content as list of latest readings
@@ -249,7 +267,9 @@ function listLastReadings(results)
 		}
 		
 		var myDate = new Date(reading.time);
-		$("#Date" + i).html(myDate.toLocaleDateString());
+		$("#Date" + i).html("" + myDate.getDate() + "/" + (myDate.getMonth()+1) + "/" + myDate.getYear()%100);
+		//$("#Date" + i).html(myDate);
+
 		myDate.setDate(myDate.getDate()-10);	// set 10 days back	
 		$("#Month"+i).html(monthNames[myDate.getMonth()]);	
 		$("#Reading"+i).html(reading.meter_read);
@@ -483,15 +503,25 @@ function showPosition(position)
 	"<br>Longitude: " + position.coords.longitude; 
 }
 
-function updateMap(position)
+function updateMapZoom(zoomChange)
 {
+	updateMap({coords : { latitude: G_METER.gps_lat, longitude: G_METER.gps_long}}, currentZoom+zoomChange);	
+}
+
+// currentZoom is page global
+function updateMap(position, zoom)
+{
+	if(zoom)
+		currentZoom = zoom;
+	else
+		currentZoom = 15;
 		// MAP
 	var centerLat = position.coords.latitude;
 	var centerLong = position.coords.longitude;
 //	var centerStr = 'center=' + G_METER.gps_lat +',' + G_METER.gps_long;
 	var centerStr = 'center=' + centerLat +',' + centerLong;
 //	var zoom = 15;
-	var zoomStr = 'zoom=15'; // no need for calculation. Similar locations+ parseInt(getZoomForMetersWide(G_METER.gps_lat));	
+	var zoomStr = 'zoom=' + currentZoom; // no need for calculation. Similar locations+ parseInt(getZoomForMetersWide(G_METER.gps_lat));	
 	var size = 'size=' + 1280 + 'x' + 720; 
   	var type = 'maptype=hybrid';
 	var language = 'language=iw'; //'hl=iw';	//Hebrew

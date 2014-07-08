@@ -2,6 +2,14 @@ localStorage.RADIUS_SETUP = localStorage.RADIUS_SETUP || 5;
 
 
 $(document).ready(function() {
+	// entrance is allowed only if authenticated
+	if(!sessionStorage.User && window.location.pathname!="/Login.html")
+	{
+		window.location.href="Login.html";
+		exit();	// stop processing further javascripts
+	}
+	
+
 	$("#readws").click(function() {
 		alert("Read WS was pressed");
 		readWS();
@@ -125,14 +133,43 @@ function TEST_initDB()
 			initDB();
 }
 
-function initDB(preInit, postInit)
+function updateDatabase(preInit, postInit)
 {
-	preInit();
+	db_checkAge(DB_AGE_LIMIT,
+		// function to execute if DB is too old 
+		function() {
+			if(preInit)
+				preInit();
+			initDB(function() {
+				if(postInit)
+					postInit();
+			});
+		}, 
+		// function to execute if DB is not old
+		postInit);
+}
+
+function initDB(postInit)
+{
+	console.log("Start initializing DB");
+	
 	db_deleteDB(function(){
 		console.log("DB Deleted.");
 		db_init(function(){
 			console.log("DB Initialized.");
-			buildDB(postInit);
+			buildDB(function(isSuccess) { // function to execute after the DB is rebuilt
+				if(isSuccess) {
+					// update DB age date
+					var dt = new Date();		// Now
+					db_addGeneral(DB_DATE, dt.toLocaleDateString());
+					console.log("DB updated successfully");
+				} else {
+					console.log("DB updated ERROR");
+				}	
+
+				if(postInit)
+					postInit(isSuccess);
+			});
 		});
 		
 	});
@@ -141,23 +178,59 @@ function initDB(preInit, postInit)
 
 function buildDB(callback)
 {
-	db_addUser("MY","אופיר", "123");
-
-	
-	DB_hUPDATE.reset(function(){	// triggered when all vars updated
-		if(callback)
-			callback();
+	DB_hUPDATE.reset(function(isSuccess){	// triggered when all vars updated
+		if(callback) 
+			callback(isSuccess);
 	});
 
 	// update meters, readings and users
  	ws_getAllMeters();
  	// ws_getLastReadings();
- 	ws_getAllUsers();
-	db_readUsers();
-
 	console.log("build DB started.");
 
 }
+
+function initUsers(OK_cb)
+{
+	db_initUsers(function() {buildUsersData(OK_cb);}, function() {OK_cb(false);});
+}
+
+// Build USERS only data. This is done before Login
+function buildUsersData(OK_cb)
+{
+	// Debug user. To be removed on operational system
+	db_addUser(4,"אופיר", "123");
+
+ 	ws_getAllUsers(function(xmlHttpRequest, status) {
+ 		updateAllUsers(xmlHttpRequest, status, OK_cb);
+ 	}, 
+ 	function() {	// Error function for ws_getAllUsers
+ 		OK_cb(false);
+ 	});
+	
+}
+
+function updateAllUsers(xmlHttpRequest, status, OK_cb)
+{
+	// on getting all users from server, add them to DB
+	$(xmlHttpRequest.responseJSON).each(function(index)
+	{
+		var user = $(this)[0];
+		db_addUser(user.UserId, user.UserName, user.Password);
+		//db_addUser(4,"אופיר", "123");
+
+	}).promise().done(function() {
+		/*alert("users read");*/
+		// uodate G_USERS tables with all users
+		db_readUsers(OK_cb, function() {OK_cb(false);});
+ 
+		DB_hUPDATE.users();
+	});
+					
+
+}
+
+
 
 function sendMessage(oldRead, newRead, newIron, newDiameter, newFactor)
 {
@@ -175,3 +248,4 @@ function sendMessage(oldRead, newRead, newIron, newDiameter, newFactor)
 	//window.location.href = "mailto:oren.honen@gmail.com?subject=subject&body=message";
 	window.location.href = mailTo;
 }
+

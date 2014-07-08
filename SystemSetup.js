@@ -1,4 +1,5 @@
 $(document).ready(function() {
+	// entrance is allowed only if authenticated
 	$("#User").html(sessionStorage.User);
 	$(".cEmailInput").val(localStorage.EMAIL);
 

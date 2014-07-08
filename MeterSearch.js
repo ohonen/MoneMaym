@@ -55,14 +55,33 @@ $(document).ready(function() {
 		$(".footer").show();
 	});
 
+	updateDatabase(preInitDbUpdate, postInitDbUpdate);
 
+});
+
+function preInitDbUpdate()
+{
+	$(".cWaitMsg").html(" טעינת מונים ...<br>אנא המתן");
+	$(".cMsgProgress").html("*");
+	
+	fadeInFunc($(".cWaitMsg"),2000);
+}
+
+function postInitDbUpdate()
+{
+	clearUpdateMessage();
+	
+	buildMetersTable();
 	// update distances and build meters table afterwards
+	console.log("Updating distances");
 	updateDistances(function() {
-		buildMetersTable();
+		//clearUpdateMessage();
+		console.log("Distances updated");
 	});
 
 
-});
+}
+
 
 function filterRead()
 {
@@ -87,10 +106,14 @@ function filterDistance()
 	inputChanged($("#formInput").val());		
 }
 
-
+// postpone activation until key stroke sequence ends
 function inputChanged(newValue)
 {
-	buildMetersTable(newValue);	
+	holdValue = newValue;
+	setTimeout(function() {
+		if(holdValue==newValue)
+			buildMetersTable(newValue);		
+	}, 800);
 }
 
 function verifyKey(e)
@@ -269,7 +292,8 @@ function updateDistances(callback)
 		}
 		else
 		{
-			callback();
+			if(callback)
+				callback();
 		}
 	});
 }
@@ -277,12 +301,12 @@ function updateDistances(callback)
 // after location is received from GPS, update distances from meters.
 function updateDistanceCallback(position, callback)
 {
-	fadeInFunc($(".cWaitMsg"),2000);
+	// Done in the background. no message is required
 	updateDbDistanceCallback.currentPosition = position;
 
 	db_updateAllMetersDistance(position, getGpsDistance, function() {
-		clearUpdateMessage();
-		callback();
+		if(callback)
+			callback();
 	});
 }
 

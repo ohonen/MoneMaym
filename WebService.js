@@ -13,16 +13,20 @@ function ws_getAllMeters(callback)
 			url: MesofonUrl,
 			type: "GET",
 			dataType: "json",
+			timeout: 15000,
 			contentType: "text/xml; charset=\"utf-8\"",
-			complete: ws_updateAllMeters2,
-			success: function(html) {
+			//complete: ws_updateAllMeters2,
+			success: function(html, status, jqXHR) {
 				console.log("ws_getAllMeters sucess");	
 				$(".cMsgProgress").text("**");	// All Meters were read successfully
 				//alert("ws_getAllMeters OK VVV");
+				ws_updateAllMeters2(jqXHR, status);
 				if(callback)
 					callback();		
 			},
 			error: function(request, status, error) {
+				DB_hUPDATE.meters(false);	// Failed to download meters data. Mark meters reading ended with failure
+				DB_hUPDATE.readings();
 				alert("ws_getAllMeters FAIL");
 			}
 	
@@ -59,7 +63,9 @@ function ws_updateAllMeters2(xmlHttpRequest, status)
 			console.log("ws_updateAllMeters2 OK");
 			//alert("ws_updateAllMeters2 OK");
 		}, 
-		function(){
+		function(){	// failed to read meters
+			DB_hUPDATE.meters(false);
+			DB_hUPDATE.readings();
 			alert("ws_updateAllMeters2 ERROR");
 		}
 	);	
@@ -72,14 +78,18 @@ function ws_getLastReadings()
 		url: MesofonUrl,
 		type: "GET",
 		dataType: "json",
+		timeout: 15000,
 		contentType: "text/xml; charset=\"utf-8\"",
-		complete: ws_updateAllMetersReadings,
-		success: function(html) {
+		//complete: ws_updateAllMetersReadings,
+		success: function(html,status, jqXHR) {
 			$(".cMsgProgress").text("****");	// READINGS received. Updating DB.
-			console.log("ws_getLastReadings sucess");			
+			console.log("ws_getLastReadings sucess");
+			ws_updateAllMetersReadings(jqXHR, status);
+						
 			//alert("ws_getLastReadings sucess");			
 		},
-		error: function(request, status, error) {
+		error: function(request, status, error) {	// failed to read last readings
+			DB_hUPDATE.readings(false);
 			alert("ws_getLastReadings FAIL");
 		}
 
@@ -106,7 +116,8 @@ function ws_updateAllMetersReadings(xmlHttpRequest, status)
 			var msg = "Meters Reading Update OK.";
 			//alert(msg);
 			console.log(msg);	
-		}, function(){
+		}, function(){	// fail to update readings
+			DB_hUPDATE.readings(false);
 			alert("Meters Reading Update ERROR.");				
 		});
 			
@@ -114,36 +125,28 @@ function ws_updateAllMetersReadings(xmlHttpRequest, status)
  
 }
 
-function ws_getAllUsers()
+function ws_getAllUsers(OK_cb, ERR_cb)
 {
 		var MesofonUrl = 'http://5.100.248.223/MasofonService/MasofonService.asmx/GetAllUsers';
 		$.ajax({
 		url: MesofonUrl,
 		type: "GET",
 		dataType: "json",
+		timeout: 5000,
 		contentType: "text/xml; charset=\"utf-8\"",
-		complete: ws_updateAllUsers,
-		success: function(html) {
-			console.log("ws_getAllUsers sucess");			
+		//complete: ws_updateAllUsers,
+		success: function(html, status, jqXHR) {
+			console.log("ws_getAllUsers sucess");	
+			OK_cb(jqXHR, status);		
 		},
 		error: function(request, status, error) {
 			alert("ws_getAllUsers FAIL");
+			DB_hUPDATE.users(false);
+			if(ERR_cb)
+				ERR_cb();
 		}
 
 	});
-
-}
-
-function ws_updateAllUsers(xmlHttpRequest, status)
-{
- $(xmlHttpRequest.responseJSON).each(function(index)
-	{
-		var user = $(this)[0];
-		db_addUser(user.UserId, user.UserName, user.Password);
-		//db_addUser(4,"אופיר", "123");
-
-	}).promise().done(function(){/*alert("users read");*/ DB_hUPDATE.users();});
-					
 
 }
 

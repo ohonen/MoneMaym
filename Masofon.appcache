@@ -1,0 +1,29 @@
+CACHE MANIFEST
+# 2014-07-02 09:45
+
+jquery-2.1.0.min.js
+#sqlite.js
+#WebService.js
+#project.css
+#project.js
+#MeterSearch.html
+#MeterSearch.css
+#MeterSearch.js
+#MeterData.html
+#MeterData.css
+#MeterData.js
+#SystemSetup.html
+#SystemSetup.css
+#SystemSetup.js
+
+Home_symbol.svg
+Grid.png
+NewAgudaLogo.svg
+
+
+FALLBACK:
+/ /Offline.html
+
+# Resources that require the user to be online.
+NETWORK:
+*

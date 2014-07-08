@@ -26,7 +26,7 @@
 .center
 {
 	font-size: 120%;
-	overflow-y: scroll;
+	overflow-y: auto;
 }
 
 

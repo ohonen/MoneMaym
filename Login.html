@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html manifest="Masofon.manifest">
+<html manifest="Masofon.appcache">
 	<head>
 		<title>Login</title>
 		<link rel="stylesheet" type="text/css" href="project.css">
@@ -24,7 +24,9 @@
 
 		<!-- <div class="Head"></div> -->
 		<div id="Content" class="header large" >
-			<form onsubmit="checkUser()">
+			<!-- <form onsubmit="checkUser()"> -->
+				
+			<form>
 			<!-- <form> -->
 				<div class="inputDiv"><p class="cInputText">שם:    </p><input class="cInputField" type="text" id="uname" name="username"><br></div>
 				<div class="inputDiv"><p class="cInputText">סיסמא: </p><input class="cInputField" type="password" id="pwd" name="password"><br><br></div>
@@ -37,7 +39,7 @@
 				<img  id="LogoImage" src="NewAgudaLogo.svg" alt="Logo" />			
 			<!-- </div> -->
 		</div>
-		<div class="cWaitMsg"> מעדכן את בסיס הנתונים ...\nאנא המתן
+		<div class="cWaitMsg"><br>
 			<div class="cMsgProgress">*</div> 
 		</div>
 	</body>
