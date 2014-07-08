@@ -29,7 +29,8 @@ $(document).ready(function() {
 	$("#footerDetails").hide();
 	
 	//$("#bUnread").click(function(){filterRead();});
-	
+	clearUpdateMessage();
+
 	$(".cFormInput").focusin(function() {
 		$("body").css({fontSize:"200%"});
 		$(".header").css({
@@ -225,18 +226,58 @@ function getGpsDistance(point1, point2)
 	return d;
 }
 
+function getPositionsDistance(position1, position2)
+{
+	return getGpsDistance(
+		{'lat':position1.coords.latitude, 'lon':position1.coords.longitude }, 
+		{'lat':position2.coords.latitude, 'lon':position2.coords.longitude }
+	);
+}
+
 // get current location and update distances to all meters
 function updateDistances(callback)
 {
-	$(".cWaitMsg").show();
+	$("#iWarning").html("");
 	getLocation(function(position) {
-		updateDistanceCallback(position, callback);
+		
+		var distance=0;
+		if(position)
+		{
+			distance=999999; // force update if no latestPosition or unabel to parse it
+			if(sessionStorage.latestPosition)
+			{
+				try
+				{
+					latestPosition = JSON.parse(sessionStorage.latestPosition);
+					distance = getPositionsDistance(latestPosition, position);
+				}
+				catch(e)
+				{
+					// if JSON parse fails, do nothing
+				}
+			} 
+			
+		} else {	// no position
+			$("#iWarning").html("*** מיקום נוכחי אינו זמין ***");
+		}
+
+		
+		if(distance>50)
+		{
+			sessionStorage.latestPosition = JSON.stringify(position);
+			updateDistanceCallback(position, callback);
+		}
+		else
+		{
+			callback();
+		}
 	});
 }
 
 // after location is received from GPS, update distances from meters.
 function updateDistanceCallback(position, callback)
 {
+	fadeInFunc($(".cWaitMsg"),2000);
 	updateDbDistanceCallback.currentPosition = position;
 
 	db_updateAllMetersDistance(position, getGpsDistance, function() {
@@ -261,7 +302,18 @@ function updateDbDistanceCallback(meter)
 	//db_updateMeterDistance(meter.unit_name, distance);
 }
 
+var fadeOutFunc = function(animationObject, speed) {
+	animationObject.fadeOut(speed,function(){fadeInFunc(animationObject, speed);});
+};
+
+var fadeInFunc = function(animationObject, speed) {
+	animationObject.fadeIn(speed,function(){fadeOutFunc(animationObject, speed);});
+};
+
+
 function clearUpdateMessage()
 {
+	console.log("stop blinking");
+	$(".cWaitMsg").stop();
 	$(".cWaitMsg").hide();
 }

@@ -19,8 +19,10 @@ function db_deleteDB(callback)
 		tx.executeSql('DROP TABLE IF EXISTS GENERAL');
 		tx.executeSql('DROP TABLE IF EXISTS METERS');
 		tx.executeSql('DROP TABLE IF EXISTS USERS');
-		tx.executeSql('DROP TABLE IF EXISTS READINGS');
 		tx.executeSql('DROP TABLE IF EXISTS OLD_READINGS');
+
+		tx.executeSql('DELETE FROM READINGS WHERE committed=1');
+
 	},db_ERR, callback);
 }
 
@@ -416,7 +418,7 @@ function db_catMeters2(readFilter,distanceFilter, filter,task, postTask)
 	}
 	
 	
-	sqlCmd += " ORDER BY METERS.distance";
+	sqlCmd += " ORDER BY METERS.unit_name";
 	
 	db.transaction(function (tx) {
 	   tx.executeSql(sqlCmd, [], function (tx, results) {

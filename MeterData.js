@@ -1,5 +1,5 @@
-var monthNames = [ "ינואר", "פברואר", "מרץ", "אפריל", "מאי", "יוני",
-    "יולי", "אוגוסט", "ספטמבר", "אוקטובר", "נובמבר", "דצמבר" ];
+var monthNames = [ "ינואר", "פבר'", "מרץ", "אפריל", "מאי", "יוני",
+    "יולי", "אוג'", "ספט'", "אוק'", "נוב'", "דצמבר" ];
 var EQUATOR_LENGTH = 6378140;
 var metersIdArr = [];
 var latestOldRead;
@@ -8,6 +8,7 @@ $(document).ready(function()
 {
 	// make sure waiting message is hidden
 	$("#iWaitMsg").hide();
+
 
 	// upload all uncomitted
 	ws_uploadUncommitedReadings();
@@ -40,7 +41,7 @@ $(document).ready(function()
 	// 'submit' click functionality with attachment to external element (original element does not exist somewhere during execution) 
     $("#mySubmitData").on("click", "#submitButton", function (e) {
         e.preventDefault();
-        if($("#readAmount").css("background-color")=='rgb(0, 128, 0)' || confirm("הכמות שנצרכה אינה בטווח החוקי. אנא אשר."))
+        if($("#readAmount").css("background-color")=='rgb(0, 128, 0)' || confirm("הכמות שנרשמה אינה בטווח החוקי.\nהאם אתה בטוח שברצונך לאשר את הקריאה הנוכחית ?"))
     		appendAndSendData(); 
     });
 	
@@ -88,7 +89,7 @@ $(document).ready(function()
 	function goGPS() {
 		$("#gpsImg").hide();
 		$("#tableImg").show();
-		$(".cReadForm").show();
+		$(".cReadForm").hide();
 		
 		$("#tableData").hide();
 
@@ -201,7 +202,7 @@ $(document).ready(function()
 function readMeterOK()
 {
 	// *** Head data
-	$("#headId").html(G_METER.qc);
+	$("#headId").html(G_METER.unit_name);
 	$("#headName").html(G_METER.description);
 	$("#headDetails").html(G_METER.customer_name);		
 
@@ -287,6 +288,12 @@ function currentReadAdjust(value)
 	
 	// Amount Format
 	var currentAmount = value - latestOldRead.meter_read;
+	// overlap checking for 10% of number of digits
+	if(currentAmount<0)
+	{
+		if((parseInt(value) + Math.pow(10,G_METER.digits)) < (parseInt(latestOldRead.meter_read) + Math.pow(10,G_METER.digits-1)))
+			currentAmount = parseInt(value) + Math.pow(10,G_METER.digits) - parseInt(latestOldRead.meter_read);
+	}
 	//elem.html(currentAmount.toFixed(2));
 	elem.html(currentAmount);
 	//if(currentAmount>0 && currentAmount<=G_METER.change_limit)	change limit check is disabled
@@ -484,11 +491,12 @@ function updateMap(position)
 //	var centerStr = 'center=' + G_METER.gps_lat +',' + G_METER.gps_long;
 	var centerStr = 'center=' + centerLat +',' + centerLong;
 //	var zoom = 15;
-	var zoomStr = 'zoom=17'; // no need for calculation. Similar locations+ parseInt(getZoomForMetersWide(G_METER.gps_lat));	
-	var size = 'size=' + 800 + 'x' + 500; 
+	var zoomStr = 'zoom=15'; // no need for calculation. Similar locations+ parseInt(getZoomForMetersWide(G_METER.gps_lat));	
+	var size = 'size=' + 1280 + 'x' + 720; 
+  	var type = 'maptype=hybrid';
 	var language = 'language=iw'; //'hl=iw';	//Hebrew
 	var markers = 'markers=color:blue|label:' + G_METER.unit_name + '|' + position.coords.latitude + ',' + position.coords.longitude;
-	var src = "http://maps.googleapis.com/maps/api/staticmap?" + centerStr + "&" + zoomStr + "&" + size + "&" + markers + "&sensor=false" + "&" + language;
+	var src = "http://maps.googleapis.com/maps/api/staticmap?" + centerStr + "&" + zoomStr + "&" + size + "&" + type + "&" + markers + "&sensor=false" + "&" + language;
 	$('#mapImage').attr('src', src);
 //	$('#Map').css('background-image', "url(http://maps.googleapis.com/maps/api/staticmap?' + centerStr + '&' + zoomStr + '&size=500x300&markers=color:blue|label:11543|32.6853626,35.5726944&sensor=false)");
 

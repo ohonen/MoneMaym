@@ -40,25 +40,25 @@
 }
 
 .head_data_element {
-	float: left;
+	float: right;
 	background: #FFCC99;
 	border: 1px solid;
 	border-radius: 4px;
-	margin: 1px 0;
+	margin: 1px 0%;
 	font-size: 100%;
 	direction: rtl;
 }
 
 #headName 
 {
-	width: 70%;
+	float: left;
+	width: 69%;
 	text-align: center;
 }
 
 #headId
 {
-	float: right;
-	width: 29%;
+	width: 30%;
 	text-align: center;
 }
 
@@ -130,7 +130,7 @@
 }
 
 .cRow1 {
-	width: 15%;
+	width: 17%;
 }
 
 .cRow2 {
@@ -219,14 +219,16 @@
 }
 
 .cMapImage {
+	width: 100%;
+	overflow: scroll;	
 }
 
 .cSaveLocation {
-	height: 40%;
+/*	height: 40%; */
 	vertical-align: top;
 	white-space: normal;
 	font-size: 200%;
-	width: 20%;
+/*	width: 20%; */
 }
 
 .cWaitMsg {
@@ -246,8 +248,10 @@
 
 @media (orientation: landscape)
 {
+/*
 	.center {
-		height: 50%;
+		height: 80%;
 		overflow-y: scroll;
 	}
+*/
 }

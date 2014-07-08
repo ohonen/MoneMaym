@@ -43,6 +43,11 @@
 	margin-right: auto;
 }
 
+.cWarning {
+	color: red;
+	text-align: center;
+}
+
 .cTable {
 	text-align: right;
 }

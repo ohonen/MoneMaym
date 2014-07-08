@@ -38,8 +38,8 @@
 				</button>
 			</div>
 			<div class="headData">
-				<div class="head_data_element" id="headName">-</div>
 				<div class="head_data_element" id="headId">-</div>
+				<div class="head_data_element" id="headName">-</div>
 				<div class="head_data_element" id="headDetails">-</div>
 			</div>
 		</div>
@@ -94,12 +94,12 @@
 <!--			<iframe id="Map" src="https://www.google.co.il/maps/@32.6853626,35.5726944,17z?hl=iw" width="50%" height="85%" frameborder="1" style="border:1">  -->
 <!--				<iframe src="https://www.google.com/maps/embed?pb=!1m10!1m8!1m3!1d3358.02568115253!2d35.572694412193925!3d32.685362631323244!3m2!1i1024!2i768!4f13.1!5e0!3m2!1siw!2s!4v1397387047598" width="80%" height="100%" frameborder="0" style="border:0">  -->
 			<div id="Map" dir="rtl">
+				<button id="bSaveLocation" class="cSaveLocation" type="button" onclick="storeLocation()">שמור מיקום נוכחי</button>			
 				<img id="mapImage" class="cMapImage"/>
 				<!--Added Dynamically in javascript -->
 <!--				<img src="http://maps.googleapis.com/maps/api/staticmap?center=32.6853626,35.5726944&zoom=15&size=300x300&markers=color:blue|label:11543|32.6853626,35.5726944&sensor=false">  -->
 				
 <!--				<iframe src="https://www.google.com/maps/embed?pb=!1m10!1m8!1m3!1d13431.798627318476!2d35.56672742978118!3d32.68738423494909!3m2!1i1024!2i768!4f13.1!5e0!3m2!1siw!2sil!4v1398751939080" width="400" height="300" frameborder="0" style="border:0"></iframe> -->
-				<button id="bSaveLocation" class="cSaveLocation" type="button" onclick="storeLocation()">שמור מיקום נוכחי</button>			
 
 			</div>
 			<table id="tableDetails" dir="rtl">
@@ -149,7 +149,7 @@
 				<button id="bLeft" class="footerButton" onclick="loadNextMeter();">הבא</button>
 			</div>
 			<div class="span_footer_wide">
-				<button id="bSetup" class="footerButton">SETUP</button>
+				<!-- <button id="bSetup" class="footerButton">SETUP</button>  -->
 			</div>
 			<div class="span_footer_wide">
 				<button id="bDetails" class="footerButton">פרטים</button>

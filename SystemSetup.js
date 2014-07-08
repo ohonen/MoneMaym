@@ -7,14 +7,14 @@ $(document).ready(function() {
         return false;
  	});
  	
- 	$("#bSetup").html("חזור");
+ 	$("#bSetup").html("שמור");
  	$("#bLeft").hide();
  	$("#bRight").hide();
  	$("#bDetails").hide();
 	$(".cWaitMsg").hide();
 
 	$("#radius").val(localStorage.RADIUS_SETUP*10);
-	$("#amountId").html(localStorage.RADIUS_SETUP);
+	$("#amountId").html(parseFloat(localStorage.RADIUS_SETUP).toFixed(1));
 	
 		$("input").focusin(function() {
 		$("body").css({fontSize:"200%"});
@@ -46,7 +46,7 @@ $(document).ready(function() {
 
 function setRadius(radius)
 {
-	localStorage.RADIUS_SETUP = parseFloat(radius)/10;
+	localStorage.RADIUS_SETUP = (parseFloat(radius)/10).toFixed(1);
 	return localStorage.RADIUS_SETUP;
 }
 
@@ -58,11 +58,18 @@ var fadeInFunc = function(animationObject, speed) {
 	animationObject.fadeIn(speed,function(){fadeOutFunc(animationObject, speed);});
 };
 
+function forceUpdate()
+{
+	if(confirm("הפעולה תגרום למחיקת כל נתוני המונים וטעינתם מחדש מהשרת.\nאנא אשר את הפעולה"))
+		initDB(preInit, postInit);
+}
+
+
 function preInit()
 {
-	$(".header").css({"webkitFilter":"blur(4px)"});
-	$(".center").css({"webkitFilter":"blur(4px)"});
-	$(".footer").css({"webkitFilter":"blur(4px)"});
+	//$(".header").css({"webkitFilter":"blur(4px)"});
+	//$(".center").css({"webkitFilter":"blur(4px)"});
+	//$(".footer").css({"webkitFilter":"blur(4px)"});
 
 	$(".cWaitMsg").show();
 	fadeOutFunc($(".cWaitMsg"),2000);
@@ -77,7 +84,7 @@ function postInit()
 
 	$(".cWaitMsg").stop();
 	$(".cWaitMsg").hide();
-	$(".header").css({"webkitFilter":"blur(0px)"});
-	$(".center").css({"webkitFilter":"blur(0px)"});
-	$(".footer").css({"webkitFilter":"blur(0px)"});
+	//$(".header").css({"webkitFilter":"blur(0px)"});
+	//$(".center").css({"webkitFilter":"blur(0px)"});
+	//$(".footer").css({"webkitFilter":"blur(0px)"});
 }

@@ -59,8 +59,8 @@ var fadeInFunc = function(animationObject, speed) {
 function preInit()
 {
 	$("#loginButton").attr('disabled','disabled');
-	$(".header").css({"webkitFilter":"blur(4px)"});
-	$(".center").css({"webkitFilter":"blur(4px)"});
+	//$(".header").css({"webkitFilter":"blur(4px)"});
+	//$(".center").css({"webkitFilter":"blur(4px)"});
 
 	$(".cWaitMsg").show();
 	fadeOutFunc($(".cWaitMsg"),3000);
@@ -76,6 +76,6 @@ function postInit()
 
 	$(".cWaitMsg").stop();
 	$(".cWaitMsg").hide();
-	$(".header").css({"webkitFilter":"blur(0px)"});
-	$(".center").css({"webkitFilter":"blur(0px)"});
+	//$(".header").css({"webkitFilter":"blur(0px)"});
+	//$(".center").css({"webkitFilter":"blur(0px)"});
 }

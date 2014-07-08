@@ -39,7 +39,14 @@ function getLocation(callback)
 {
 	if (navigator.geolocation)
 	{
-		navigator.geolocation.getCurrentPosition(callback);
+		navigator.geolocation.getCurrentPosition(
+			function(position) {
+				callback(position);
+			}, 
+			function(e) {
+			// error getting current position
+			callback();
+		});
 	}
 	else
 	{
@@ -156,14 +163,15 @@ function sendMessage(oldRead, newRead, newIron, newDiameter, newFactor)
 {
 	var mailTo = "mailto:";
 	mailTo += localStorage.EMAIL;
-	mailTo += "?subject=החלפת מונה מים מספר " + G_METER.qc;
+	mailTo += "?subject=החלפת מונה מים מספר " + G_METER.unit_name;
 	mailTo += "&body=";
 	mailTo += "קריאה ישנה אחרונה: " + oldRead + "%0D%0A";
 	mailTo += "קריאה חדשה ראשונה: " + newRead + "%0D%0A";
 	mailTo += "מספר ברזל חדש: " + newIron + "%0D%0A";
 	mailTo += "קוטר חדש: " + newDiameter + "%0D%0A";
 	mailTo += "פקטור חדש: " + newFactor + "%0D%0A";
-	mailTo += "%0D%0Aהערות: " + "%0D%0A";
+	mailTo += "%0D%0Aסיבת החלפה: " + "%0D%0A";
+	mailTo += "%0D%0Aהערות נוספות: " + "%0D%0A";
 	//window.location.href = "mailto:oren.honen@gmail.com?subject=subject&body=message";
 	window.location.href = mailTo;
 }
