@@ -5,6 +5,10 @@ var metersIdArr = [];
 var latestOldRead;
 // for dbl click workaround (you cant combine click & dbl click on the same element)
 var DELAY = 700, clicks = 0, timer = null;
+var GREEN = "LawnGreen";
+var RED = "LightCoral";
+var BLUE = "LightBlue";
+
 
 $(document).ready(function() 
 {
@@ -44,7 +48,8 @@ $(document).ready(function()
 	// 'submit' click functionality with attachment to external element (original element does not exist somewhere during execution) 
     $("#mySubmitData").on("click", "#submitButton", function (e) {
         e.preventDefault();
-        if($("#readAmount").css("background-color")=='rgb(0, 128, 0)' || confirm("הכמות שנרשמה אינה בטווח החוקי.\nהאם אתה בטוח שברצונך לאשר את הקריאה הנוכחית ?"))
+        $("#colorDummy").css('color', GREEN);
+        if($("#readAmount").css("background-color")===$("#colorDummy").css('color') || confirm("הכמות שנרשמה אינה בטווח החוקי.\nהאם אתה בטוח שברצונך לאשר את הקריאה הנוכחית ?"))
     		appendAndSendData(); 
     });
 	
@@ -266,9 +271,10 @@ function listLastReadings(results)
 			latestOldRead = jQuery.extend({}, reading);	// 'reading' shallow copy
 		}
 		
-		var myDate = new Date(reading.time);
+		var myDate = new Date(reading.time*1);
 		$("#Date" + i).html("" + myDate.getDate() + "/" + (myDate.getMonth()+1) + "/" + myDate.getYear()%100);
 		//$("#Date" + i).html(myDate);
+		//$("#Date" + i).html(reading.time);
 
 		myDate.setDate(myDate.getDate()-10);	// set 10 days back	
 		$("#Month"+i).html(monthNames[myDate.getMonth()]);	
@@ -318,9 +324,9 @@ function currentReadAdjust(value)
 	elem.html(currentAmount);
 	//if(currentAmount>0 && currentAmount<=G_METER.change_limit)	change limit check is disabled
 	if(currentAmount>0)
-		elem.css("background-color", "green");
+		elem.css("background-color", GREEN);
 	else
-		elem.css("background-color", "red");			
+		elem.css("background-color", RED);			
 }
 
 // set amount for old readings
@@ -335,14 +341,14 @@ function amountSet(elem, type, curRead, prevRead, limit)
 			elem.html(amount);
 			// if(amount>0 && amount<=limit) limit check removed
 			if(amount>0)
-				elem.css("background-color", "green");
+				elem.css("background-color", GREEN);
 			else
-				elem.css("background-color", "red");			
+				elem.css("background-color", RED);			
 			break;	
 
 		case 1:	// first new meter reading
 			elem.html("---");
-			elem.css("background-color", "blue");
+			elem.css("background-color", BLUE);
 			break;
 	
 	}	
@@ -363,18 +369,19 @@ function appendAndSendData(now)
 		now = new Date();
 		
 	// db_addReading(now.toISOString(), sessionStorage.meterId, $("#currentRead").val());
-	db_addReading(now.toISOString(), metersIdArr[sessionStorage.meterIndex], $("#currentRead").val(), function(tx, results) {
+	db_addReading(now.getTime(), metersIdArr[sessionStorage.meterIndex], $("#currentRead").val(), function(tx, results) {
 		// following read insertion to DB read it back and make sure it is there
 		checkReadStatus();
 	});
 	
-	// send data to server
+	// send data to server as ISO string
 	ws_insertReading(G_METER.qc, now.toISOString(), $("#currentRead").val(), "NONE");
 
 	// if location does not exist, update it automatically
 	db_onMeterTask(sessionStorage.meterId, unitAutoLocationUpdate);
 }
-	
+
+// Get current system reading of a specific meter and enable/disable active reading accordingly 	
 function checkReadStatus()
 {
 	db_taskMeterReadings(sessionStorage.meterId, function(tx, results) {
@@ -384,6 +391,7 @@ function checkReadStatus()
 	});
 }
 
+// Check latest read to enable/disable active reading
 function checkReadStatusCallback(tx,results)
 {
 	// calculate current month on 10 days back
@@ -392,10 +400,11 @@ function checkReadStatusCallback(tx,results)
 
 	// run through all readings and see if current month was already read
 	// this loop will return if current month was already read
+	// There is expected one reading at most
 	for(var i=0; i<results.rows.length; ++i)
 	{
 		var meterRead = results.rows.item(i);
-		var readDate = new Date(meterRead.time);
+		var readDate = new Date(meterRead.time*1);
 		readDate.setDate(readDate.getDate()-10);
 		if(readDate.getMonth()==now.getMonth() && readDate.getYear()==now.getYear())
 		{
@@ -408,6 +417,7 @@ function checkReadStatusCallback(tx,results)
 	
 }
 
+// check current system latest read
 function checkLatestRead()
 {
 	if(latestOldRead)
@@ -415,7 +425,7 @@ function checkLatestRead()
 		var now = new Date();
 		now.setDate(now.getDate()-10);
 
-		var oldReadingDate = new Date(latestOldRead.time);
+		var oldReadingDate = new Date(latestOldRead.time*1);
 		oldReadingDate.setDate(oldReadingDate.getDate()-10);
 
 		if(now.getMonth()==oldReadingDate.getMonth() && now.getYear()==oldReadingDate.getYear())

@@ -63,6 +63,8 @@ function preInitDbUpdate()
 {
 	$(".cWaitMsg").html(" טעינת מונים ...<br>אנא המתן");
 	$(".cMsgProgress").html("*");
+	$(".cMsgProgress").show();
+	
 	
 	fadeInFunc($(".cWaitMsg"),2000);
 }
@@ -72,13 +74,19 @@ function postInitDbUpdate()
 	clearUpdateMessage();
 	
 	buildMetersTable();
-	// update distances and build meters table afterwards
+
+	// update distances without knowing if its new DB
 	console.log("Updating distances");
 	updateDistances(function() {
 		//clearUpdateMessage();
 		console.log("Distances updated");
-	});
 
+		if(sessionStorage.latestPosition)
+			$("#bCloseby").removeAttr("disabled");
+		else
+			$("#bCloseby").attr("disabled","disabled");
+
+	});
 
 }
 
@@ -188,14 +196,16 @@ function dataFilter(str)
 };
 
 //var productServiceUrl = "http://5.100.248.223/MesophonTest/service1.asmx?op=GetSingleInstanceForTestUsingContext";
-
+var metersTable;
 function buildMetersTable(filter)
 {
 	// Clear old table and Meters Id Array
 	$("#metersTable").empty();	
+	metersTable = $("#metersTable");
+	
 	metersIdArr = [];
 	
-	db_catMeters2(readFilter,distanceFilter, filter,rowsBuilderTask, metersTablePostBuild);
+	db_catMeters2(readFilter,distanceFilter, filter,rowsBuilderTaskQuick, metersTablePostBuild);
 
 }
 
@@ -219,111 +229,24 @@ function rowsBuilderTask(meter)
 	);	
 }
 
+function rowsBuilderTaskQuick(meter)
+{
+	metersIdArr.push(meter.qc);
+	
+	sInput = '<input class="cMeterId" type="submit" value="' + meter.unit_name + '">';
+	sForm = '<form action="MeterData.html" onSubmit=Mone(' + (metersIdArr.length-1) + ',"' + meter.qc + '")>' + sInput + '</form>';	
+	sTd1 = '<td class="cMeterIdData">' + sForm + '</td>';
+	sTd2 = '<td class="cCustomerName">' + meter.description + '</td>';
+	sTd3 = '<td class="cMeterDescription">' + meter.customer_name + '</td>';
+	sTr = '<tr class="cMeterRow">' + sTd1 + sTd2 + sTd3 + '</tr>';
+	
+	metersTable.append(sTr);	
+}
+
+
 function metersTablePostBuild()
 {
 	sessionStorage.metersIdArr = JSON.stringify(metersIdArr);
-}
-
-// degrees to radians. Assist with globe distance calculation.
-function deg2Rad(deg)
-{
-	return 	deg * (Math.PI / 180);
-}
-
-// Extension to 'Number' element. Doesn't work properly and was replaced with deg2Rad
-Number.prototype.toRad = function() { return this * (Math.PI / 180); };
-
-// accurate global distance between 2 GPS points. Used to calculate distance from current location to each meter 
-function getGpsDistance(point1, point2)
-{
-	var R = 6378140; // km  
-	var dLat = deg2Rad(point2.lat-point1.lat);	// (point2.lat-point1.lat).toRad();
-	var dLon = deg2Rad(point2.lon-point1.lon); // (point2.lon-point1.lon).toRad();
-	var lat1 = deg2Rad(point1.lat);	// point1.lat.toRad();
-	var lat2 = deg2Rad(point2.lat);	// point2.lat.toRad();
-	
-	var a = Math.sin(dLat/2) * Math.sin(dLat/2) +
-	        Math.sin(dLon/2) * Math.sin(dLon/2) * Math.cos(lat1) * Math.cos(lat2); 
-	var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
-	var d = R * c;
-	return d;
-}
-
-function getPositionsDistance(position1, position2)
-{
-	return getGpsDistance(
-		{'lat':position1.coords.latitude, 'lon':position1.coords.longitude }, 
-		{'lat':position2.coords.latitude, 'lon':position2.coords.longitude }
-	);
-}
-
-// get current location and update distances to all meters
-function updateDistances(callback)
-{
-	$("#iWarning").html("");
-	getLocation(function(position) {
-		
-		var distance=0;
-		if(position)
-		{
-			distance=999999; // force update if no latestPosition or unabel to parse it
-			if(sessionStorage.latestPosition)
-			{
-				try
-				{
-					latestPosition = JSON.parse(sessionStorage.latestPosition);
-					distance = getPositionsDistance(latestPosition, position);
-				}
-				catch(e)
-				{
-					// if JSON parse fails, do nothing
-				}
-			} 
-			
-		} else {	// no position
-			$("#iWarning").html("*** מיקום נוכחי אינו זמין ***");
-		}
-
-		
-		if(distance>50)
-		{
-			sessionStorage.latestPosition = JSON.stringify(position);
-			updateDistanceCallback(position, callback);
-		}
-		else
-		{
-			if(callback)
-				callback();
-		}
-	});
-}
-
-// after location is received from GPS, update distances from meters.
-function updateDistanceCallback(position, callback)
-{
-	// Done in the background. no message is required
-	updateDbDistanceCallback.currentPosition = position;
-
-	db_updateAllMetersDistance(position, getGpsDistance, function() {
-		if(callback)
-			callback();
-	});
-}
-
-// deprecated ?
-function updateDbDistanceCallback(meter)
-{
-	var distance;
-	if(meter.gps_lat && updateDbDistanceCallback.currentPosition.coords.latitude)
-	{
-		var myPosition = {'lat': updateDbDistanceCallback.currentPosition.coords.latitude, 'lon': updateDbDistanceCallback.currentPosition.coords.longitude};
-		var meterPosition = {'lat': meter.gps_lat, 'lon': meter.gps_long};
-		distance = getGpsDistance(myPosition,meterPosition);
-	}
-	else
-		distance = 5000;	// some average so unupdated meters will not be too far or too close. anyway it should be temporary
-	
-	//db_updateMeterDistance(meter.unit_name, distance);
 }
 
 var fadeOutFunc = function(animationObject, speed) {

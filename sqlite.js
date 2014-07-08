@@ -3,7 +3,7 @@ var DB_VERSION='1.0';
 var G_USERS = new Object();
 var G_METER;
 var DB_DATE = "DBTime";
-var DB_AGE_LIMIT = 14;
+var DB_AGE_LIMIT = 1;
 var DB_hUPDATE = new db_updateHandler();
 
 function db_queryFunc(myFunc)
@@ -193,7 +193,8 @@ function db_addMeterReading2(allMetersUpdate_JSON, OK_callback, ERR_callback)
 		metersUpdateSqlCmd[index] += ' WHERE qc=' + item.IoId + ';';
 		
 		// 	tx.executeSql('CREATE TABLE IF NOT EXISTS OLD_READINGS(time TEXT, meter_id INTEGER, meter_read INTEGER, type INTEGER)');
-		old_readingsSqlCmd.push('INSERT INTO OLD_READINGS VALUES ("' + date.toLocaleDateString()+ '", ' + item.IoId + ', ' + item.Value + ', ' + type + ')');
+		//old_readingsSqlCmd.push('INSERT INTO OLD_READINGS VALUES ("' + date.toLocaleDateString()+ '", ' + item.IoId + ', ' + item.Value + ', ' + type + ')');
+		old_readingsSqlCmd.push('INSERT INTO OLD_READINGS VALUES ("' + date.getTime()+ '", ' + item.IoId + ', ' + item.Value + ', ' + type + ')');
 
 	}).promise().done(function(){
 		var db = openDatabase(DB_NAME, DB_VERSION, 'Water Meter DB', 2 * 1024 * 1024);
@@ -336,6 +337,8 @@ function db_catReadings()
 	},db_ERR, db_OK);
 }
 
+
+// Get current system reading of a specific meter
 function db_taskMeterReadings(id, task)
 {
 	var db = openDatabase('monedb', '1.0', 'Water Meter DB', 2 * 1024 * 1024);
@@ -421,7 +424,7 @@ function db_catMeters2(readFilter,distanceFilter, filter,task, postTask)
 	var db = openDatabase('monedb', '1.0', 'Water Meter DB', 2 * 1024 * 1024);
 	var msg;
 	var table;
-	var sqlCmd = 'SELECT * FROM METERS LEFT JOIN READINGS ON READINGS.meter_id = METERS.unit_number';
+	var sqlCmd = 'SELECT * FROM METERS LEFT JOIN READINGS ON READINGS.meter_id = METERS.qc';
 	var filterWord = " WHERE ";
 	
 	if(readFilter) { sqlCmd += filterWord + 'READINGS.meter_id IS NULL'; filterWord = " AND "; }
@@ -521,7 +524,7 @@ function db_checkAge(ageInDays, tooOldFunction, notOldFunction)
 			{
 				// 
 				var today = new Date();	// now
-				var dbDate = new Date(results.rows.item(0).value);
+				var dbDate = new Date(results.rows.item(0).value*1);
 				dbDate.setDate(dbDate.getDate()+ ageInDays);	// Set update date 
 				if(dbDate < today) 
 					update = true;

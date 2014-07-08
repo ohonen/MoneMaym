@@ -62,7 +62,10 @@ var fadeInFunc = function(animationObject, speed) {
 function forceUpdate()
 {
 	if(confirm("הפעולה תגרום למחיקת כל נתוני המונים וטעינתם מחדש מהשרת.\nאנא אשר את הפעולה"))
-		initDB(preInit, postInit);
+	{
+		preInit();
+		initDB(postInit);
+	}
 }
 
 
@@ -72,6 +75,7 @@ function preInit()
 	//$(".center").css({"webkitFilter":"blur(4px)"});
 	//$(".footer").css({"webkitFilter":"blur(4px)"});
 
+	$("#bSetup").attr("disabled", "disabled");
 	$(".cWaitMsg").show();
 	fadeOutFunc($(".cWaitMsg"),2000);
 
@@ -79,12 +83,14 @@ function preInit()
 
 function postInit()
 {
+	sessionStorage.latestPosition = "";	// This will force distances update on DB
 	var msg="בסיס הנתונים עודכן בהצלחה";
 	console.log(msg);
 	//alert(msg);
 
 	$(".cWaitMsg").stop();
 	$(".cWaitMsg").hide();
+	$("#bSetup").removeAttr("disabled");
 	//$(".header").css({"webkitFilter":"blur(0px)"});
 	//$(".center").css({"webkitFilter":"blur(0px)"});
 	//$(".footer").css({"webkitFilter":"blur(0px)"});

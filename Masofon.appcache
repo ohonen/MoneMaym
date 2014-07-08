@@ -22,7 +22,7 @@ NewAgudaLogo.svg
 
 
 FALLBACK:
-/ /Offline.html
+/ Offline.html
 
 # Resources that require the user to be online.
 NETWORK:

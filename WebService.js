@@ -13,7 +13,7 @@ function ws_getAllMeters(callback)
 			url: MesofonUrl,
 			type: "GET",
 			dataType: "json",
-			timeout: 15000,
+			timeout: 20000,
 			contentType: "text/xml; charset=\"utf-8\"",
 			//complete: ws_updateAllMeters2,
 			success: function(html, status, jqXHR) {
@@ -78,7 +78,7 @@ function ws_getLastReadings()
 		url: MesofonUrl,
 		type: "GET",
 		dataType: "json",
-		timeout: 15000,
+		timeout: 20000,
 		contentType: "text/xml; charset=\"utf-8\"",
 		//complete: ws_updateAllMetersReadings,
 		success: function(html,status, jqXHR) {
