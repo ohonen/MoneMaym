@@ -55,6 +55,10 @@ $(document).ready(function()
 	
 	// 'switch-submit' event
 	$("#bSwitchSubmit").click(function(){
+		if($("#iOldRead").val()=="" || $("#iNewRead").val()=="") {
+			alert("המידע לא נשלח. חובה למלא את כל השדות");
+			return;
+		}
 		$("#bSwitchSubmit").attr('disabled', 'disabled');	// will be re-enabled on next page reload
 		sendMessage($("#iOldRead").val(), $("#iNewRead").val(), $("#iNewIron").val(), $("#iNewDiameter").val(), $("#iNewFactor").val() );
 	});
@@ -175,12 +179,12 @@ $(document).ready(function()
 	$("input").focusin(function() {
 		//$("body").css({fontSize:"200%"});
 		$(".header").css({
-			"top": "0%",
-			"height":"30%"
+//			"top": "0%",
+//			"height":"30%"
 		});
 		$(".center").css({
-			"top": "30%",
-			"height": "70%"
+//			"top": "30%",
+//			"height": "70%"
 		});
 		//$(".topBar").hide();
 		//$(".footer").hide();
@@ -302,7 +306,17 @@ function getZoomForMetersWide (latitude)
 }
 
 // get current read value and set read amount properly
-function currentReadAdjust(value)
+function currentReadAdjust(newValue)
+{
+	holdValue = newValue;
+	setTimeout(function() {
+		if(holdValue==newValue)
+			currentReadAdjustFinal(holdValue);		
+	}, 1000);
+}
+
+
+function currentReadAdjustFinal(value)
 {
 	var elem = $("#readAmount");
 	if(!latestOldRead || value==0)
@@ -323,7 +337,9 @@ function currentReadAdjust(value)
 	//elem.html(currentAmount.toFixed(2));
 	elem.html(currentAmount);
 	//if(currentAmount>0 && currentAmount<=G_METER.change_limit)	change limit check is disabled
-	if(currentAmount>0)
+	if(currentAmount==0)
+		elem.css("background-color", "transparent");
+	else if(currentAmount>0)
 		elem.css("background-color", GREEN);
 	else
 		elem.css("background-color", RED);			
@@ -472,6 +488,7 @@ storeLocation.meterGeoData;
 function storeLocation()
 {
 	//getLocationCallback = new storeLocationCallback();
+	$("#iWaitMsg").html("שומר מיקום נוכחי");
 	$("#iWaitMsg").show();
 	setTimeout(function(){$("#iWaitMsg").hide();}, 2000);
 
@@ -480,15 +497,17 @@ function storeLocation()
 
 function storeLocationCallback(position)
 {
-	
-	updateMap(position);
-	//var locationComplete = new storeLocationUploadComplete();
-	var gpsLat = position.coords.latitude || 0;
-	var gpsLong = position.coords.longitude || 0;
-	var gpsAlt = position.coords.altitude || 0;
-	storeLocation.meterGeoData = {'id': G_METER.qc, 'LAT':gpsLat, 'LONG':gpsLong, 'ALT': gpsAlt};
-	// Update center
-	ws_uploadCurrentLocation(storeLocation.meterGeoData, storeLocationUploadComplete);
+	if(position)
+	{
+		updateMap(position);
+		//var locationComplete = new storeLocationUploadComplete();
+		var gpsLat = position.coords.latitude || 0;
+		var gpsLong = position.coords.longitude || 0;
+		var gpsAlt = position.coords.altitude || 0;
+		storeLocation.meterGeoData = {'id': G_METER.qc, 'LAT':gpsLat, 'LONG':gpsLong, 'ALT': gpsAlt};
+		// Update center
+		ws_uploadCurrentLocation(storeLocation.meterGeoData, storeLocationUploadComplete);
+	}
 }
 
 function storeLocationUploadComplete(xmlHttpRequest, status)

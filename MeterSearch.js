@@ -1,6 +1,21 @@
 var readFilter = false;
 var distanceFilter = false;
 var metersIdArr = [];
+var metersIdMap;
+var metersIdArrComplete=false;
+// Buttons vars
+var filterState = 1;
+var buttonsFilterText;
+var btn_closeTxt;	// Text on Close/Far button
+var btn_readTxt;	// Text on Read/Unread button
+var CLOSE_BUTTON=1;
+var READ_BUTTON=2;
+// Text on buttons
+var BTN_ALL="הכל";
+var BTN_CLOSE="קרוב";
+var BTN_FAR="רחוק";
+var BTN_READ="נקרא";
+var BTN_UNREAD="לא נקרא";
 
 function Mone(index, number)
 {
@@ -19,6 +34,7 @@ $(document).ready(function() {
 		//readWS2();
 	});
 	
+	$("#formInput").val("");
 	$("#footerSetup").click(function() {
 		window.location = "SystemSetup.html";
 	});
@@ -46,14 +62,14 @@ $(document).ready(function() {
 	*/
 
 	$(".cFormInput").focusin(function() {
-		$("body").css({fontSize:""});
+		$("body").css({fontSize:"120%"});
 		$(".header").css({
 			"height":""
 		});
 		$(".center").css({
 			"top": "",
 			"height": "",
-			"fontSize":""
+			"fontSize":"150%"
 		});
 		//$(".footer").hide();
 	});
@@ -80,9 +96,10 @@ $(document).ready(function() {
 			"top": "",
 			"height": ""
 		});
-		$(".footer").show();
+		//$(".footer").show();
 	});
 
+//	$(".cWaitMsg").html(" טעינת מונים ...<br>אנא המתן");
 
 	updateDatabase(preInitDbUpdate, postInitDbUpdate);
 
@@ -92,10 +109,9 @@ function preInitDbUpdate()
 {
 	$(".cWaitMsg").html(" טעינת מונים ...<br>אנא המתן");
 	$(".cMsgProgress").html("*");
-	$(".cMsgProgress").show();
 	
 	
-	fadeInFunc($(".cWaitMsg"),2000);
+	fadeInFunc($(".cWaitMsgDiv"),2000);
 }
 
 function postInitDbUpdate()
@@ -122,27 +138,20 @@ function postInitDbUpdate()
 
 function filterRead()
 {
-	if(readFilter)
-	{
-		readFilter = false;
-		$("#bUnread").html("לא נקרא");
-	}
-	else
-	{
-		readFilter = true;
-		$("#bUnread").html("נקרא");
-	}
-	
+	changeFilterState(READ_BUTTON);	
 	inputChanged($("#formInput").val());
 }
 
 function filterDistance()
 {
-	distanceFilter = !distanceFilter;
-	$("#bCloseby").html(distanceFilter?"רחוק":"קרוב");
+	changeFilterState(CLOSE_BUTTON);	
 	inputChanged($("#formInput").val());		
 }
 
+function inputChangedUp(newValue)
+{
+	inputChanged(newValue);
+}
 // postpone activation until key stroke sequence ends
 function inputChanged(newValue)
 {
@@ -232,19 +241,26 @@ function buildMetersTable(filter)
 	$("#metersTable").empty();	
 	metersTable = $("#metersTable");
 	
-	metersIdArr = [];
-	
-	db_catMeters2(readFilter,distanceFilter, filter,rowsBuilderTaskQuick, metersTablePostBuild);
+	if(!metersIdArrComplete)
+	{
+		metersIdArr = [];
+		metersIdMap = {};
+	}
+	db_catMeters2(buttonsFilterText, filter,rowsBuilderTaskQuick, metersTablePostBuild);
 
 }
 
 // Building table
 function rowsBuilderTask(meter)
 {
-	metersIdArr.push(meter.qc);
+	if(!metersIdArrComplete)
+	{
+		metersIdArr.push(meter.qc);
+		metersIdMap[meter.qc] = metersIdArr.length-1;
+	}
 	
 	var $tdUnitName = $('<td>', { class: "cMeterIdData"});
-	var $form = $('<form action="MeterData.html" onSubmit=Mone(' + (metersIdArr.length-1) + ',"' + meter.qc + '")/>');
+	var $form = $('<form action="MeterData.html" onSubmit=Mone(' + (metersIdMap[meter.qc]) + ',"' + meter.qc + '")/>');
 	var $input = $('<input>', { class:"cMeterId",  type:"submit", value: meter.unit_name });
 	$input.appendTo($form);
 	$form.appendTo($tdUnitName);
@@ -260,10 +276,14 @@ function rowsBuilderTask(meter)
 
 function rowsBuilderTaskQuick(meter)
 {
-	metersIdArr.push(meter.qc);
+	if(!metersIdArrComplete)
+	{
+		metersIdArr.push(meter.qc);
+		metersIdMap[meter.qc] = metersIdArr.length-1;
+	}
 	
 	sInput = '<input class="cMeterId" type="submit" value="' + meter.unit_name + '">';
-	sForm = '<form action="MeterData.html" onSubmit=Mone(' + (metersIdArr.length-1) + ',"' + meter.qc + '")>' + sInput + '</form>';	
+	sForm = '<form action="MeterData.html" onSubmit=Mone(' + (metersIdMap[meter.qc]) + ',"' + meter.qc + '")>' + sInput + '</form>';	
 	sTd1 = '<td class="cMeterIdData">' + sForm + '</td>';
 	sTd2 = '<td class="cCustomerName">' + meter.description + '</td>';
 	sTd3 = '<td class="cMeterDescription">' + meter.customer_name + '</td>';
@@ -275,9 +295,95 @@ function rowsBuilderTaskQuick(meter)
 
 function metersTablePostBuild()
 {
-	sessionStorage.metersIdArr = JSON.stringify(metersIdArr);
+	if(!metersIdArrComplete)
+	{
+		sessionStorage.metersIdArr = JSON.stringify(metersIdArr);
+		//sessionStorage.metersIdMap = JSON.stringify(metersIdMap);
+		metersIdArrComplete=true;
+	}
 }
 
+
+/*
+ * buttonId==1: close/all
+ * buttonId==2; read/unread
+ */
+function changeFilterState(buttonId)
+{
+	// filterState transition
+	switch(filterState*10 + buttonId) {
+		case 11: filterState=4; break;
+		case 12: filterState=2; break;
+		
+		case 21: filterState=4; break;
+		case 22: filterState=3; break;
+
+		case 31: filterState=4; break;
+		case 32: filterState=2; break;
+		
+		case 41: filterState=1; break;
+		case 42: filterState=5; break;
+		
+		case 51: filterState=1; break;
+		case 52: filterState=6; break;
+		
+		case 61: filterState=1; break;
+		case 62: filterState=5; break;
+		
+	}
+	
+	var BASE_FILTER_TEXT = "SELECT * FROM METERS LEFT JOIN READINGS ON READINGS.meter_id = METERS.qc ";
+	var BASE_READ_FILTER = "READINGS.meter_id IS "; 
+	var BASE_CLOSE_FILTER = "METERS.distance<" + (localStorage.RADIUS_SETUP * 1000);
+	var BASE_FILTER_ORDER = " ORDER BY METERS.unit_name";
+	// new filterState action
+	switch(filterState) {
+		case 1:	// Show all meters 
+			btn_closeTxt = BTN_CLOSE;
+			btn_readTxt = BTN_UNREAD;
+			buttonsFilterText = "";
+			break;		
+
+		case 2:	// Show unread only
+			btn_closeTxt = BTN_CLOSE;
+			btn_readTxt = BTN_READ;
+			buttonsFilterText = BASE_READ_FILTER + "NULL";
+			break;		
+
+		case 3:	// Show read only
+			btn_closeTxt = BTN_CLOSE;
+			btn_readTxt = BTN_UNREAD;
+			buttonsFilterText = BASE_READ_FILTER + "NOT NULL";
+			break;		
+
+		case 4:	// Show all close
+			btn_closeTxt = BTN_ALL;
+			btn_readTxt = BTN_UNREAD;
+			buttonsFilterText = BASE_CLOSE_FILTER;
+			break;		
+
+		case 5:	// Show close and unread only
+			btn_closeTxt = BTN_ALL;
+			btn_readTxt = BTN_READ;
+			buttonsFilterText = BASE_CLOSE_FILTER + " AND " + BASE_READ_FILTER + "NULL";
+			break;		
+
+		case 6:	// Show close and read only
+			btn_closeTxt = BTN_ALL;
+			btn_readTxt = BTN_UNREAD;
+			buttonsFilterText = BASE_CLOSE_FILTER + " AND " + BASE_READ_FILTER + "NOT NULL";
+			break;		
+	}
+	
+	$("#bCloseby").html(btn_closeTxt);
+	$("#bUnread").html(btn_readTxt);
+
+}
+
+/*
+ * Wait Message Section
+ * 
+ */
 var fadeOutFunc = function(animationObject, speed) {
 	animationObject.fadeOut(speed,function(){fadeInFunc(animationObject, speed);});
 };
@@ -290,6 +396,6 @@ var fadeInFunc = function(animationObject, speed) {
 function clearUpdateMessage()
 {
 	console.log("stop blinking");
-	$(".cWaitMsg").stop();
-	$(".cWaitMsg").hide();
+	$(".cWaitMsgDiv").stop();
+	$(".cWaitMsgDiv").hide();
 }

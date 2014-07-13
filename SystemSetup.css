@@ -22,9 +22,10 @@ input
 {
 	direction: rtl;
 	height: 85%;
-	top: 5%;
-	overflow: auto;
+/*	top: 5%; */
+/*	overflow: auto; */ 
 }
+
 
 input[type='range'] {
 	-webkit-appearance: none;
@@ -43,16 +44,6 @@ input[type='range']::-webkit-slider-thumb {
     border-radius: 20px;
 }
 
-.cForceUpdate {
-	position: absolute;
-	font-size: 200%;
-	line-height: 0.5em;
-	width: 1.5em;
-	font-weight: bolder;
-	margin-right: 1%;
-	bottom: 2%;
-}
-
 .cEmailTitle, .cEmailInput {
 	direction: ltr;
 	text-align: left;
@@ -62,6 +53,20 @@ input[type='range']::-webkit-slider-thumb {
 .cEmailTitle {
 	width: 100%;
 }
+
+.cForceUpdateDiv {
+	position: absolute;
+	bottom: 10%;
+}
+
+.cForceUpdate {
+	font-size: 200%;
+	line-height: 0.5em;
+	width: 1.5em;
+	font-weight: bolder;
+	margin-right: 1%;
+}
+
 
 /* Experiment */
 .cActiveEnable {
@@ -83,5 +88,20 @@ input[type='range']::-webkit-slider-thumb {
 
 .cMsgProgress {
 	font-size: 200%;
+}
+
+
+
+@media (orientation: landscape)
+{
+	.center {
+		height: auto;
+		min-height: 100%;
+	}
+	
+	.cForceUpdateDiv {
+		position: relative;
+		bottom: 0px;
+	}
 }
 

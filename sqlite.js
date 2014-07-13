@@ -33,6 +33,7 @@ function dbFunc(val)
 	return 3;
 };
 
+// Create tables and clean readings from ones already sent
 function db_init(callback)
 {
 	var db = openDatabase('monedb', '1.0', 'Water Meter DB', 2 * 1024 * 1024);
@@ -179,28 +180,37 @@ function db_addMeterReading2(allMetersUpdate_JSON, OK_callback, ERR_callback)
 {
 	var metersUpdateSqlCmd = [];
 	var old_readingsSqlCmd = [];
+	var now = new Date();
+	now.setDate(now.getDate()-10);
 	$(allMetersUpdate_JSON).each(function(index, item)
 	{
 		//var reading = $(this)[0];
 		var dateNum = item.ReadingTime.replace(/\D/g,'');
 		var date = new Date(parseInt(dateNum));
 		var type = 0; // MISSING
+		/* old method saving this data on METERS - deprecated
 		var modIndex = index%4;
 		metersUpdateSqlCmd[index] = 'UPDATE METERS SET ';
 		metersUpdateSqlCmd[index] += 'time_' + modIndex + '="' + date.toLocaleDateString() + '",';
 		metersUpdateSqlCmd[index] += 'reading_' + modIndex + '=' + item.Value + ',';
 		metersUpdateSqlCmd[index] += 'type_' + modIndex + '=' + type;
 		metersUpdateSqlCmd[index] += ' WHERE qc=' + item.IoId + ';';
-		
+		*/
 		// 	tx.executeSql('CREATE TABLE IF NOT EXISTS OLD_READINGS(time TEXT, meter_id INTEGER, meter_read INTEGER, type INTEGER)');
+		// New method using the OLD_READINGS table
 		//old_readingsSqlCmd.push('INSERT INTO OLD_READINGS VALUES ("' + date.toLocaleDateString()+ '", ' + item.IoId + ', ' + item.Value + ', ' + type + ')');
 		old_readingsSqlCmd.push('INSERT INTO OLD_READINGS VALUES ("' + date.getTime()+ '", ' + item.IoId + ', ' + item.Value + ', ' + type + ')');
+
+		// if this reading belongs to this month then add it to regular readings
+		if(isCurrentMonth(date))
+			old_readingsSqlCmd.push('INSERT INTO READINGS VALUES("' + date.getTime() + '", ' + item.IoId + ', ' + item.Value + ', 1)');
+
 
 	}).promise().done(function(){
 		var db = openDatabase(DB_NAME, DB_VERSION, 'Water Meter DB', 2 * 1024 * 1024);
 		db.transaction(function (tx) {
-			for(var i=0; i<metersUpdateSqlCmd.length; ++i) {
-				tx.executeSql(metersUpdateSqlCmd[i]);
+			for(var i=0; i<old_readingsSqlCmd.length; ++i) {
+				//tx.executeSql(metersUpdateSqlCmd[i]);
 				tx.executeSql(old_readingsSqlCmd[i]);
 			}
 		},ERR_callback || db_ERR, OK_callback || db_OK);			
@@ -419,25 +429,29 @@ function db_catMeters(readFilter,filter)
 }
 
 
-function db_catMeters2(readFilter,distanceFilter, filter,task, postTask)
+function db_catMeters2(buttonsFilter, textFilter,task, postTask)
 {
 	var db = openDatabase('monedb', '1.0', 'Water Meter DB', 2 * 1024 * 1024);
 	var msg;
 	var table;
-	var sqlCmd = 'SELECT * FROM METERS LEFT JOIN READINGS ON READINGS.meter_id = METERS.qc';
-	var filterWord = " WHERE ";
+	var sqlCmd = 'SELECT * FROM METERS LEFT JOIN READINGS ON READINGS.meter_id = METERS.qc ';
 	
-	if(readFilter) { sqlCmd += filterWord + 'READINGS.meter_id IS NULL'; filterWord = " AND "; }
-	
-	if(distanceFilter) { sqlCmd += filterWord + 'METERS.distance<' + (localStorage.RADIUS_SETUP * 1000); filterWord = " AND "; }
+	if(buttonsFilter || textFilter)
+	{
+		sqlCmd += " WHERE ";
+		if(buttonsFilter)
+		{
+			sqlCmd += buttonsFilter + " ";
+			if(textFilter)
+				sqlCmd += "AND ";
+		}
+
+		if(textFilter)
+		{
+			sqlCmd += textFilter;
+		}		
 		
-	if(filter) { 
-		sqlCmd += filterWord+ '(METERS.unit_name LIKE "%' + filter + '%" OR '; 
-		sqlCmd += 'METERS.description LIKE "%' + filter + '%" OR '; 
-		sqlCmd += 'METERS.customer_name LIKE "%' + filter + '%")'; 
-		filterWord = " AND "; 
 	}
-	
 	
 	sqlCmd += " ORDER BY METERS.unit_name";
 	

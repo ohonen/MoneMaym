@@ -1,4 +1,5 @@
 localStorage.RADIUS_SETUP = localStorage.RADIUS_SETUP || 5;
+var G_MONTH_LEAP_DAYS = 10;		// How many days of next month are still condsi
 
 
 $(document).ready(function() {
@@ -43,6 +44,18 @@ xmlhttp.open("GET","livesearch.php?q="+str,true);
 xmlhttp.send();
 };
 
+var currentMonth;
+function isCurrentMonth(date)
+{
+	if(!currentMonth)
+	{
+		currentMonth = new Date();
+		currentMonth.setDate(currentMonth.getDate()-G_MONTH_LEAP_DAYS);
+	}
+	
+	date.setDate(date.getDate()-G_MONTH_LEAP_DAYS);
+	return (date.getMonth()==currentMonth.getMonth() && date.getYear()==currentMonth.getYear());
+}
 
 function dataFilter(str)
 {
@@ -134,10 +147,13 @@ function initDB(postInit)
 {
 	console.log("Start initializing DB");
 	
+	// Delete old DB
 	db_deleteDB(function(){
 		console.log("DB Deleted.");
+		// Re-create tables if needed
 		db_init(function(){
 			console.log("DB Initialized.");
+			// Get new data from server and fill tables
 			buildDB(function(isSuccess) { // function to execute after the DB is rebuilt
 				if(isSuccess) {
 					// update DB age date
@@ -227,6 +243,7 @@ function sendMessage(oldRead, newRead, newIron, newDiameter, newFactor)
 	mailTo += localStorage.EMAIL;
 	mailTo += "?subject=החלפת מונה מים מספר " + G_METER.unit_name;
 	mailTo += "&body=";
+	mailTo += "משתמש:" + sessionStorage.User + "%0D%0A";
 	mailTo += "קריאה ישנה אחרונה: " + oldRead + "%0D%0A";
 	mailTo += "קריאה חדשה ראשונה: " + newRead + "%0D%0A";
 	mailTo += "מספר ברזל חדש: " + newIron + "%0D%0A";
@@ -258,11 +275,9 @@ function getLocation(callback)
 				callback();
 			},
 			{	// Always use GPS
-				/*
-		         timeout: 1000,	// let GPS answer within 1 Sec (for slow devices)
+		         timeout: 30000,	// let GPS answer within 30 Sec (for slow devices)
 		         enableHighAccuracy: true,		// GPS data only
 		         maximumAge: 10000	// enable 10Sec of old GPS data
-		         */
 		     }
 		);
 	}

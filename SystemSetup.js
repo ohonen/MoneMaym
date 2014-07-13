@@ -12,30 +12,30 @@ $(document).ready(function() {
  	$("#bLeft").hide();
  	$("#bRight").hide();
  	$("#bDetails").hide();
-	$(".cWaitMsg").hide();
+	$(".cWaitMsgDiv").hide();
 
 	$("#radius").val(localStorage.RADIUS_SETUP*10);
 	$("#amountId").html(parseFloat(localStorage.RADIUS_SETUP).toFixed(1));
 	
 		$("input").focusin(function() {
-		$("body").css({fontSize:"200%"});
+		$("body").css({fontSize:""});
 		$(".center").css({
 			"top": "0%",
-			"height": "100%"
+			"height": ""
 		});
-		$(".topBar").hide();
-		$(".footer").hide();
+		//$(".topBar").hide();
+		//$(".footer").hide();
 
 	});
 	
 	$("input").focusout(function() {
-		$("body").css({fontSize:"200%"});
+		$("body").css({fontSize:""});
 		$(".center").css({
-			"top": "5%",
-			"height": "90%"
+			"top": "",
+			"height": ""
 		});
-		$(".topBar").show();
-		$(".footer").show();
+		//$(".topBar").show();
+		//$(".footer").show();
 	});
 	
 	$(".cEmailInput").keyup(function(){

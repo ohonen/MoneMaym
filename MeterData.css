@@ -30,10 +30,9 @@
 }
 
 .headButtonImg {
-	height: auto;
+	height: 95%;
 	width: auto;
-	max-width: 90%;
-	max-height: 90%;	
+	margin: auto;
 }
 
 .headData {
@@ -84,9 +83,10 @@
 
 .cReadData {
 	float: right;
-	width: 70%;
+	width: 75%;
 	margin-left: auto;
 	margin-right: auto;
+	padding: auto;
 }
 
 .cSubmitData {
@@ -107,22 +107,27 @@
 }
 
 .cReadInputDiv {
-	width: 10em;
+	width: 95%;
 	margin: auto;
 }
 
 .cReadInput {
+	width: 100%;
 	font-size: 90%;
 	text-align: center;
 	background: yellow;
 }
 
 .cReadAmount {
-	width: 9em;
+	width: 70%;
+/*
 	margin-left:auto;
 	margin-right:auto;
+*/
+	margin: auto;
 	text-align: center;
 	direction: ltr;
+	border-radius: 20px;
 }
 
 .cTableData {
@@ -147,6 +152,10 @@
 .cRow4 {
 	width: 30%;
 }
+
+#Amount0, #Amount1, #Amount2, #Amount3 {
+	direction: ltr;
+} 	
 
 .cItemKey {
 	font-weight: bold;
